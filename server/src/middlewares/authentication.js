@@ -1,11 +1,11 @@
 "use strict"
 /* -------------------------------------------------------
-                Event Project
+    
 ------------------------------------------------------- */
 // app.use(authentication):
 
 const jwt = require('jsonwebtoken');
-const Token = require('../models/token');
+
 
 module.exports = async (req, res, next) => {
 
@@ -16,12 +16,9 @@ module.exports = async (req, res, next) => {
 
     if (tokenKey) {
 
-        if (tokenKey[0] == 'Token') { // SimpleToken
 
-            const tokenData = await Token.findOne({ token: tokenKey[1] }).populate('userId');
-            req.user = tokenData ? tokenData.userId : null
 
-        } else if (tokenKey[0] == 'Bearer') { // JWT
+        if (tokenKey[0] == 'Bearer') { // JWT
             jwt.verify(tokenKey[1], process.env.ACCESS_KEY, (err, userData) => userData ? req.user = userData : req.user = null);
         }
     };

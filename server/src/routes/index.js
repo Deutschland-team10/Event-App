@@ -2,3 +2,16 @@
 /* -------------------------------------------------------
                 Event Project
 ------------------------------------------------------- */
+const router = require('express').Router()
+
+router.use('/auth', require('./auth'));
+
+router.use('/users', require('./user'));
+
+router.use('/events', require('./event'));
+
+router.use('/groups', require('./group'));
+
+router.use('/categories', require('./category'));
+
+module.exports = router;
