@@ -2,3 +2,69 @@
 /* -------------------------------------------------------
                 Event Project
 ------------------------------------------------------- */
+const { mongoose } = require("../configs/dbConnection")
+
+const EventSchema = new mongoose.Schema({
+
+    creater: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+
+    participants: [
+        {
+            type: String,
+            required: true
+        }
+    ],
+
+    sharedGroup: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Group",
+            required: true,
+        }
+    ],
+
+    categoryId:{
+        type:String,
+        required:true
+    },
+
+   title:{
+    type: String,
+    trim:true,
+    required:true
+  },
+
+  description:{
+    type: String,
+    trim:true,
+    required:true
+  },
+
+  date:{
+    type: Date,
+    required:true
+  },
+  time:{
+    type: String,
+    trim:true,
+    required:true
+
+  },
+
+  location:{
+    type:String,
+    trim:true,
+    required:true
+  }
+
+},
+    {
+        collection: "events",
+        timestamps:true
+    }
+)
+module.exports = mongoose.model("Event", EventSchema)

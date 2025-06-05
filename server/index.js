@@ -1,9 +1,30 @@
 "use strict"
 /* -------------------------------------------------------
-    | FULLSTACK TEAM | NODEJS / EXPRESS |
+               Event APP
 ------------------------------------------------------- */
 const express = require('express')
+const http= require("http")
+const { Server } = require("socket.io");
+const cors = require("cors")
 const app = express()
+const server = http.createServer(app);
+
+// const io = new Server(server, {
+//   cors: corsOptions,
+// });
+
+// const corsOptions = {
+//   origin: CLIENT_URL,
+//   methods: ["GET", "POST", "PUT", "PATCH", "HEAD", "DELETE", "OPTIONS"],
+//   allowedHeaders: [
+//     "Origin",
+//     "Content-Type",
+//     "Authorization",
+//     "Accept-Language",
+//   ],
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
 
 /* ------------------------------------------------------- */
 // Required Modules:
@@ -24,6 +45,8 @@ const { dbConnection } = require('./src/configs/dbConnection')
 dbConnection()
 
 /* ------------------------------------------------------- */
+
+
 // Middlewares:
 
 // Accept JSON:
@@ -33,13 +56,16 @@ app.use(express.json());
 app.use('/upload', express.static('./upload'));
 
 // Check Authentication:
-app.use(require('./src/middlewares/authentication'));
+ app.use(require('./src/middlewares/authentication'));
 
 // Run Logger:
 app.use(require('./src/middlewares/logger'));
 
 // res.getModelList():
 app.use(require('./src/middlewares/queryHandler'));
+
+//socket.io
+app.use(require("./src/middlewares/socketIo"))
 
 /* ------------------------------------------------------- */
 // Routes:
@@ -48,7 +74,7 @@ app.use(require('./src/middlewares/queryHandler'));
 app.all('/', (req, res) => {
     res.send({
         error: false,
-        message: 'Welcome to Stock Management API',
+        message: 'Welcome to Event Management API',
         documents: {
             swagger: '/documents/swagger',
             redoc: '/documents/redoc',
@@ -72,5 +98,4 @@ app.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`))
 /* ------------------------------------------------------- */
 // Syncronization (must be in commentLine):
 // require('./src/helpers/sync')() // !!! It clear database.
-// thıs ıs from muhterem branch
-// bu yorum kazim branch'indan
+
