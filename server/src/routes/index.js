@@ -14,4 +14,6 @@ router.use('/groups', require('./group'));
 
 router.use('/categories', require('./category'));
 
+router.use('/chats', require('./chat&message'));
+
 module.exports = router;
