@@ -65,7 +65,7 @@ app.use(require('./src/middlewares/logger'));
 app.use(require('./src/middlewares/queryHandler'));
 
 //socket.io
-app.use(require("./src/middlewares/socketIo"))
+//app.use(require("./src/middlewares/socketIo"))
 
 /* ------------------------------------------------------- */
 // Routes:

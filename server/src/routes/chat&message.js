@@ -5,16 +5,13 @@
 const router = require('express').Router()
 /* ------------------------------------------------------- */
 
-const { list, create, read, deletee } = require('../controllers/message');
+const { chatlist } = require('../controllers/chat&message');
 const { isLogin, isAdmin, isStaff } = require('../middlewares/permissions');
 
-// URL: /message
+// URL: /chats
 
-router.route('/').get(isLogin, list).post(isLogin, create);
+router.route('/').get(isLogin, chatlist)
 
-router.route('/:id')
-    .get(isLogin, read)
-    .delete(isStaff, deletee);
 
 /* ------------------------------------------------------- */
 module.exports = router;
