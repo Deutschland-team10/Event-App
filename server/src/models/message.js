@@ -6,14 +6,14 @@ const {mongoose}= require("../configs/dbConnection")
 
 const MessageSchema = new mongoose.Schema({
 
-    creater: {
+    sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
-    receiver: {
+    chatId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Chat",
         required: true,
     },
     content: {

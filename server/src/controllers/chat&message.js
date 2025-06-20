@@ -3,11 +3,12 @@
                 Event Project
 ------------------------------------------------------- */
 
-const message = require('../models/message');
+const Message = require('../models/message');
+const Chat= require("../models/chat")
 
 module.exports = {
 
-    list: async (req, res) => {
+    chatlist: async (req, res) => {
         /*
             #swagger.tags = ["Messages"]
             #swagger.summary = "List Messages"
@@ -22,16 +23,17 @@ module.exports = {
             `
         */
 
-        const result = await res.getModelList(message);
+        //const result = await res.getModelList(message);
+        const result= await Chat.find()
 
         res.status(200).send({
             error: false,
-            details: await res.getModelListDetails(message),
+            
             result
         });
     },
 
-    create: async (req, res) => {
+    messageChatCreate: async (req, res) => {
 
         /*
             #swagger.tags = ["Messages"]
@@ -45,7 +47,9 @@ module.exports = {
             }
         */
 
-        
+        // content senderId chatId veya reciverId
+        // eger ki chatid gönderilmisse bu chat zaten bulunmakta, yeni bir chat olusturma
+        // eger ki chatId yok ise yeni bir chat olustur
         const { receiverId, content } = req.body;
         if (!receiverId || !content) {
             return res.status(400).send({
