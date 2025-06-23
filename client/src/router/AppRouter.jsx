@@ -4,7 +4,8 @@ import Home from "../pages/Home";
 import Profile from "../pages/Profile"
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-//import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar";
+import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
 
 
@@ -12,6 +13,7 @@ const AppRouter = () => {
   return (
     <Router>
       <Navbar/>
+      <Dashboard/>
        <Routes>
          <Route path="/" element={<Home />} />
          <Route path="/register" element={<Register />} />
