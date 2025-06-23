@@ -4,7 +4,14 @@ import {
     Box,
     Typography,
 } from "@mui/material";
-
+import { object, string } from "yup";
+export const loginScheme = object({
+    email: string()
+        .email("Lutfen valid bir email giriniz")
+        .required("Email zorunludur"),
+    password: string()
+        .required("password zorunludur")
+})
 const LoginForm = ({
     values,
     errors,
@@ -30,7 +37,6 @@ const LoginForm = ({
             <Typography variant="h5" align="center">
                 Login
             </Typography>
-
             <TextField
                 label="Email"
                 name="email"
@@ -41,7 +47,6 @@ const LoginForm = ({
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
             />
-
             <TextField
                 label="Password"
                 name="password"
@@ -52,7 +57,6 @@ const LoginForm = ({
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
             />
-
             <Button
                 type="submit"
                 variant="contained"
@@ -61,7 +65,6 @@ const LoginForm = ({
             >
                 Login
             </Button>
-
             <Button
                 type="button"
                 className="btn-danger flex justify-between text-center"
@@ -73,5 +76,4 @@ const LoginForm = ({
         </Box>
     );
 };
-
 export default LoginForm;
