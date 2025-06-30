@@ -2,9 +2,12 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import LockIcon from "@mui/icons-material/Lock";
+import image from "../assets/registerPp.png";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { Box } from "@mui/material";
+import AuthHeader from "../components/AuthHeader";
+import AuthImage from "../components/AuthImage";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import useAuthCall from "../hook/useAuthCall";
@@ -15,26 +18,26 @@ const Register = () => {
 
     const SignupSchema = Yup.object().shape({
         username: Yup.string()
-            .min(5, "Kullanıcı adı 5 karakterden az olamaz")
-            .max(50, "Kullanıcı adı 50 karakterden fazla olamaz")
-            .required("Kullanıcı adı zorunludur"),
+            .min(5, "Der Benutzername darf nicht weniger als 5 Zeichen lang sein")
+            .max(50, "Der Benutzername darf nicht länger als 50 Zeichen sein")
+            .required("Der Benutzername ist obligatorisch"),
         firstName: Yup.string()
-            .min(2, "Too Short!")
-            .max(50, "Too Long!")
-            .required("Required"),
+            .min(2, "Zu kurz!")
+            .max(50, "Zu lang!")
+            .required("Erforderlich(Notwendig)"),
         lastName: Yup.string()
-            .min(2, "Too Short!")
-            .max(50, "Too Long!")
-            .required("Required"),
+            .min(2, "Zu kurz!")
+            .max(50, "Zu lang!")
+            .required("Erforderlich(Notwendig)"),
         email: Yup.string()
-            .email("Email adresinde @ işareti olmalıdır")
-            .required("Bu alan zorunludur"),
+            .email("E-Mail-Adresse muss @-Zeichen enthalten")
+            .required("Dieses Feld ist obligatorisch"),
         password: Yup.string()
-            .min(8, "Password 8 karakterdn fazla olmalıdır")
-            .matches(/[a-z]/, "Şifre küçük harf içermelidir")
-            .matches(/[A-Z]/, "Şifre büyük hark içermelidir")
-            .matches(/\d+/, "Şifre sayısal karakter içermelidir.")
-            .matches(/[@$?!%&*]+/, "Özel karakter içermelidir(@$?!%&*)"),
+            .min(8, "Das Passwort muss mehr als 8 Zeichen enthalten")
+            .matches(/[a-z]/, "Das Passwort muss Kleinbuchstaben enthalten")
+            .matches(/[A-Z]/, "Das Passwort muss Großbuchstaben enthalten")
+            .matches(/\d+/, "Das Passwort muss numerische Zeichen enthalten")
+            .matches(/[@$?!%&*]+/, "Muss Sonderzeichen enthalten(@$?!%&*)"),
     });
 
     return (
@@ -84,9 +87,6 @@ const Register = () => {
                         validationSchema={SignupSchema}
                         onSubmit={(values, actions) => {
                             register(values)
-                            // actşons değeri formikden gelen metodları içerir , resetForm, setSubmitting,...
-                            // Formun text alanaları temizlenmesi için resetForm
-                            // submit işlemi bittiği için setSubmitting(false) yapıyoruz.
                             actions.resetForm()
                             actions.setSubmitting(false)
                         }}
@@ -94,11 +94,9 @@ const Register = () => {
                         component={(props) => <RegisterForm  {...props} />}
                     />
 
-
-
                     {/* /* -------------------------------------------------------------------------- */}
                     <Box sx={{ textAlign: "center", mt: 2, color: "secondary.main" }}>
-                        <Link to="/">Already have an account? Sign in</Link>
+                        <Link to="/">Sie haben bereits ein Konto? Sign In</Link>
                     </Box>
                 </Grid>
 

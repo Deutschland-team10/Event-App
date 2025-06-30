@@ -4,16 +4,15 @@ import {
     Box,
     Typography,
 } from "@mui/material";
-import { object, string } from "yup";
 
-export const loginScheme = object({
+export const loginSchema = object({
     email: string()
-        .email("Lutfen valid bir email giriniz")
-        .required("Email zorunludur"),
+        .email("Bitte geben Sie eine gültige E-Mail ein")
+        .required("E-Mail ist obligatorisch"),
     password: string()
-        .required("password zorunludur")
-
+        .required("Kennwort ist obligatorisch")
 })
+
 const LoginForm = ({
     values,
     errors,
@@ -23,6 +22,14 @@ const LoginForm = ({
     handleSubmit,
     isSubmitting,
 }) => {
+    const signUpGoogle = async () => {
+        try {
+            await signInWithGoogle();
+        } catch (error) {
+            console.error("Anmeldung bei Google fehlgeschlagen:", error);
+        }
+    }
+
     return (
         <Box
             component="form"
@@ -39,6 +46,7 @@ const LoginForm = ({
             <Typography variant="h5" align="center">
                 Login
             </Typography>
+
             <TextField
                 label="Email"
                 name="email"
@@ -49,6 +57,7 @@ const LoginForm = ({
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
             />
+
             <TextField
                 label="Password"
                 name="password"
@@ -59,6 +68,7 @@ const LoginForm = ({
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
             />
+
             <Button
                 type="submit"
                 variant="contained"
@@ -67,15 +77,18 @@ const LoginForm = ({
             >
                 Login
             </Button>
+
             <Button
                 type="button"
-                className="btn-danger flex justify-between text-center"
-            // onClick={signUpGooglE}
+                variant="contained"
+                onClick={signUpGoogle}
+                sx={{ mt: 2, bgcolor: "#db4437", "&:hover": { bgcolor: "#c1351d" } }}
+                startIcon={<GoogleIcon />}
             >
-                Continue with Google
-                <GoogleIcon color="currentColor" />
+                Weiter mit Google
             </Button>
         </Box>
     );
 };
+
 export default LoginForm;
