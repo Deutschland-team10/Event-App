@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 /* -------------------------------------------------------
                 Event Project
 ------------------------------------------------------- */
@@ -7,8 +7,6 @@ const Event = require("../models/event");
 const User = require("../models/user");
 const Group = require("../models/group");
 const Category = require("../models/category");
-
-
 
 module.exports = {
   list: async (req, res) => {
@@ -24,10 +22,9 @@ module.exports = {
                     <li>URL/?<b>page=2&limit=1</b></li>
                 </ul>`      
         
-        */
+    */
 
     const result = await res.getModelList(Event);
-
 
     res.status(200).send({
       error: false,
@@ -35,9 +32,8 @@ module.exports = {
       result,
     });
   },
-  create: async (req, res) => {
-  
 
+  create: async (req, res) => {
     /* 
         #swagger.tags=["Events"]
         #swagger.summary="Create Events"
@@ -51,8 +47,7 @@ module.exports = {
         
         }
         
-        */
-
+    */
 
     const participantInfos = req.body.participants || [];
     const groupInfos = req.body.sharedGroup || [];
@@ -62,66 +57,65 @@ module.exports = {
 
     let user, group;
 
-    for (let info of participantInfos){
-    if (typeof info === "object") {
-      user = await User.findOne({ email: info.email });
-      if (!user) {
-        user = await User.create({ ...info });
+    for (let info of participantInfos) {
+      if (typeof info === "object") {
+        user = await User.findOne({ email: info.email });
+        if (!user) {
+          user = await User.create({ ...info });
+        }
+      } else if (typeof info === "string") {
+        user = await User.findById(info);
       }
-    } else if (typeof info === "string") {
-      user = await User.findById(info);
+
+      if (user) participantIds.push(user._id);
     }
 
-    if (user) participantIds.push(user._id);
-  }
-
-  for (let info of groupInfos) {
-    if (typeof info === "object") {
-      group = await Group.findOne({ title: info.title });
-      if (!group) {
-        group = await Group.create({ ...info, creater: req.user._id });
+    for (let info of groupInfos) {
+      if (typeof info === "object") {
+        group = await Group.findOne({ title: info.title });
+        if (!group) {
+          group = await Group.create({ ...info, creater: req.user._id });
+        }
+      } else if (typeof info === "string") {
+        group = await Group.findById(info);
       }
-    } else if (typeof info === "string") {
-      group = await Group.findById(info);
+
+      if (group) groupIds.push(group._id);
     }
 
-    if (group) groupIds.push(group._id);
-  }
+    const result = await Event.create({
+      creater: req.user._id,
+      participants: participantIds,
+      sharedGroup: groupIds,
+      categoryId: req.body.categoryId,
+      title: req.body.title,
+      description: req.body.description,
+      date: req.body.date,
+      time: req.body.time,
+      location: req.body.location,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-   const result = await Event.create({
-    creater: req.user._id,
-    participants: participantIds,
-    sharedGroup: groupIds,
-    categoryId: req.body.categoryId,
-    title: req.body.title,
-    description: req.body.description,
-    date: req.body.date,
-    time: req.body.time,
-    location: req.body.location,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-
-  res.status(201).send({
-    error: false,
-    message: "Event created successfully",
-    result,
-  });
-
+    res.status(201).send({
+      error: false,
+      message: "Event created successfully",
+      result,
+    });
   },
 
   read: async (req, res) => {
     /*
-     #swagger.tags=["Users"]
+     #swagger.tags=["Events"]
      #swagger.summary="Read Event"
     */
 
     const result = await Event.findOne({ _id: req.params.id }).populate([
-            { path: 'creater', select: 'username email' },
-            { path: 'participants', select: "firstName lastName email" },
-            { path: 'sharedGroup', select: "title location"},
-            { path: 'categoryId', select: "name" }
-        ]);
+      { path: "creater", select: "username email" },
+      { path: "participants", select: "firstName lastName email" },
+      { path: "sharedGroup", select: "title location" },
+      { path: "categoryId", select: "name" },
+    ]);
 
     res.status(200).send({
       error: false,
@@ -142,7 +136,8 @@ module.exports = {
         
         }
         
-        */
+    */
+   
     const result = await Event.updateOne({ _id: req.params.id }, req.body, {
       new: true,
       runValidators: true,
