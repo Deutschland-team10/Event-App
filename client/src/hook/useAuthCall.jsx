@@ -1,10 +1,8 @@
 import { useDispatch } from "react-redux";
 import {
-    fetchFail,
-    fetchStart,
-    loginSuccess,
-    logoutSuccess,
-    registerSuccess,
+    login,
+    logout,
+    signup,
 } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "./useAxios";
@@ -20,7 +18,7 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithoutHeader.post(`users`, userInfo);
-            dispatch(registerSuccess(data));
+            dispatch(signup(data));
             navigate("/stock");
             toastSuccessNotify("Register is successful");
         } catch (error) {
@@ -34,7 +32,7 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithoutHeader.post(`auth/login`, userInfo);
-            dispatch(loginSuccess(data));
+            dispatch(login(data));
             navigate("/stock");
             toastSuccessNotify("Login is successful");
         } catch (error) {
@@ -48,7 +46,7 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithToken.get(`auth/logout`);
-            dispatch(logoutSuccess());
+            dispatch(logout());
             toastSuccessNotify("Logout is successful");
 
             navigate("/");
