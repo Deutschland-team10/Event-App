@@ -4,6 +4,8 @@ import {
     Box,
     Typography,
 } from "@mui/material";
+import GoogleIcon from "../assets/GoogleIcon";
+import { object, string } from "yup";
 
 export const loginSchema = object({
     email: string()

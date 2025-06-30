@@ -4,6 +4,7 @@ import {
     Box,
     Typography,
 } from "@mui/material";
+import GoogleIcon from "../assets/GoogleIcon";
 
 const RegisterForm = ({
     values,
