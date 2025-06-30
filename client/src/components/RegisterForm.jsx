@@ -14,6 +14,14 @@ const RegisterForm = ({
     handleSubmit,
     isSubmitting,
 }) => {
+    const signUpGoogle = async () => {
+        try {
+            await signInWithGoogle();
+        } catch (error) {
+            console.error("Anmeldung bei Google fehlgeschlagen:", error);
+        }
+    }
+
     return (
         <Box
             component="form"
@@ -94,13 +102,14 @@ const RegisterForm = ({
 
             <Button
                 type="button"
-                className="btn-danger flex justify-between text-center "
-            // onClick={() => signUpGooglE()}
+                variant="contained"
+                onClick={signUpGoogle}
+                sx={{ mt: 2, bgcolor: "#db4437", "&:hover": { bgcolor: "#c1351d" } }}
+                startIcon={<GoogleIcon />}
             >
-                Continue with Google
-                <GoogleIcon color="currentColor" />
+                Weiter mit Google
             </Button>
-        </Box>
+        </Box >
     );
 };
 

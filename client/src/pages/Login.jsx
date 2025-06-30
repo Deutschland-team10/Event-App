@@ -4,10 +4,13 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import LockIcon from "@mui/icons-material/Lock";
+import image from "../assets/loginPp.png";
 import { Link } from "react-router-dom";
+import AuthHeader from "../components/AuthHeader";
+import AuthImage from "../components/AuthImage";
 import { Formik } from "formik";
 import useAuthCall from "../hook/useAuthCall";
-import LoginForm, { loginScheme } from "../components/LoginForm";
+import LoginForm, { loginSchema } from "../components/LoginForm";
 
 const Login = () => {
     const { login } = useAuthCall();
@@ -41,7 +44,7 @@ const Login = () => {
 
                     <Formik
                         initialValues={{ email: "", password: "" }}
-                        validationSchema={loginScheme}
+                        validationSchema={loginSchema}
                         onSubmit={(values, actions) => {
                             login(values);
                             actions.resetForm();
@@ -52,7 +55,7 @@ const Login = () => {
                     </Formik>
                     <Box sx={{ textAlign: "center", mt: 2, color: "secondary.main" }}>
                         <Link to="/register">
-                            Don't have an account? Sign Up
+                            Sie haben noch kein Konto? Sign Up
                         </Link>
                     </Box>
                 </Grid>
