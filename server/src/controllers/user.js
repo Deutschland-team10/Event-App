@@ -22,12 +22,12 @@ module.exports = {
             `
         */
 
-        const data = await res.getModelList(User);
+        const result = await res.getModelList(User);
 
         res.status(200).send({
             error: false,
             details: await res.getModelListDetails(User),
-            data
+            result
         });
     },
 
@@ -37,11 +37,11 @@ module.exports = {
             #swagger.summary = "Get Single User"
         */
 
-        const data = await User.findById(req.params.id);
+        const result = await User.findById(req.params.id);
 
         res.status(200).send({
             error: false,
-            data
+            result
         });
     },
 
@@ -62,11 +62,11 @@ module.exports = {
             }
         */
 
-        const data = await User.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
+        const result = await User.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
 
         res.status(200).send({
             error: false,
-            data,
+            result,
             new: await User.findById(req.params.id)
         });
     },
@@ -77,12 +77,12 @@ module.exports = {
             #swagger.summary = "Delete User"
         */
 
-        const data = await User.deleteOne({ _id: req.params.id });
+        const result = await User.deleteOne({ _id: req.params.id });
 
-        res.status(data.deletedCount ? 204 : 404).send({
-            error: !data.deletedCount,
-            message: data.deletedCount ? 'Data deleted.' : 'Data is not found or already deleted.',
-            data
+        res.status(result.deletedCount ? 204 : 404).send({
+            error: !result.deletedCount,
+            message: result.deletedCount ? 'Data deleted.' : 'Data is not found or already deleted.',
+            result
         });
     },
 };
