@@ -5,11 +5,18 @@
 const { mongoose } = require('../configs/dbConnection')
 
 const ProfileSchema=new mongoose.Schema({
+    
+    userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+    }, 
+
     name:{
         type:String,
         trim:true,
-        required:true,
-        unique:true
+        required:true
     },
 
     gender:{

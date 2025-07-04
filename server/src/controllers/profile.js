@@ -1,4 +1,5 @@
 "use strict"
+const profile = require('../models/profile');
 /* -------------------------------------------------------
                 Profile Project
 ------------------------------------------------------- */
@@ -22,7 +23,9 @@ module.exports = {
             
             */
     
-        const result = await res.getModelList(Profile);
+        const result = await res.getModelList(Profile, {}, [
+          { path: 'user', select: 'username email firstName lastName image' }
+        ]);
     
     
         res.status(200).send({
@@ -53,29 +56,27 @@ module.exports = {
         if (existingProfile) {
             return res.status(400).send({
                 error: true,
-                message: "This user already has a profile.",
+                message: 'User already has a profile'
             });
         }
 
        const result = await Profile.create({
-        creater: req.user._id,
-        participants: participantIds,
-        sharedGroup: groupIds,
-        categoryId: req.body.categoryId,
-        title: req.body.title,
-        description: req.body.description,
-        date: req.body.date,
-        time: req.body.time,
-        location: req.body.location,
+        user: req.user._id,
+        name: profile.name,
+        gender: profile.gender,
+        birthDate: profile.birthDate,
+        city: profile.city,
+        profilePhoto: profile.userId.profilePhoto,
+        interests: profile.interests,
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
+       });
     
-      res.status(201).send({
+       res.status(201).send({
         error: false,
         message: "Profile created successfully",
         result,
-      });
+       });
     
       },
     
@@ -86,8 +87,9 @@ module.exports = {
         */
     
         const result = await Profile.findOne({ _id: req.params.id }).populate([
-                { path: 'user', select: 'username email image' },
+                { path: 'user', select: 'username email firstName lastName image' },
             ]);
+
     
         res.status(200).send({
           error: false,
@@ -109,6 +111,14 @@ module.exports = {
             }
             
             */
+
+        if (req.user.id !== profile.user.toString()) {
+            return res.status(403).send({
+                error: true,
+                message: 'You can only update your own profile'
+            });
+        }
+
         const result = await Profile.updateOne({ _id: req.params.id }, req.body, {
           new: true,
           runValidators: true,
@@ -121,6 +131,13 @@ module.exports = {
       },
     
       deletee: async (req, res) => {
+
+        if (req.user.id !== profile.user.toString()) {
+            return res.status(403).send({
+                error: true,
+                message: 'You can only delete your own profile'
+            });
+        }
         const result = await Profile.deleteOne({ _id: req.params.id });
     
         res.status(result.deletedCount ? 204 : 404).send({
