@@ -6,6 +6,8 @@ import {
 } from "@mui/material";
 import GoogleIcon from "../assets/GoogleIcon";
 import { object, string } from "yup";
+import { useNavigate } from 'react-router-dom'; // Yönlendirme için
+import { signInWithGoogle } from "../helper/firebase"; // Firebase yapılandırma dosyanızdan import edin
 
 export const loginSchema = object({
     email: string()
@@ -24,13 +26,19 @@ const LoginForm = ({
     handleSubmit,
     isSubmitting,
 }) => {
+    const navigate = useNavigate(); // Yönlendirme hook'u
+
     const signUpGoogle = async () => {
         try {
             await signInWithGoogle();
+            // Başarılı giriş sonrası yönlendirme
+            navigate('/'); // Kullanıcının yönlendirileceği sayfa (örneğin: /dashboard veya /home)
+            console.log("Google ile başarıyla oturum açıldı!");
         } catch (error) {
-            console.error("Anmeldung bei Google fehlgeschlagen:", error);
+            console.error("Google ile oturum açma başarısız oldu:", error);
+            // Hata durumunda kullanıcıya bilgi verebilirsiniz, örneğin bir toast mesajı ile
         }
-    }
+    };
 
     return (
         <Box
