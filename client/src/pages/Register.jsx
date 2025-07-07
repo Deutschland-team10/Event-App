@@ -71,7 +71,7 @@ const Register = () => {
                         mb={2}
                         color="secondary.light"
                     >
-                        Register
+                        SIGN UP
                     </Typography>
                     {/* /* -------------------------------------------------------------------------- */}
                     {/* FORMİK YAPISI */}
@@ -96,10 +96,11 @@ const Register = () => {
 
                     {/* /* -------------------------------------------------------------------------- */}
                     <Box sx={{ textAlign: "center", mt: 2, color: "secondary.main" }}>
-                        <Link to="/">Sie haben bereits ein Konto? Sign In</Link>
+                        <Link to="/login">
+                            Sie haben bereits ein Konto? Sign In
+                        </Link>
                     </Box>
                 </Grid>
-
                 <AuthImage image={image} />
             </Grid>
         </Container>
