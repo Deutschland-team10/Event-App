@@ -7,23 +7,27 @@ import Register from "../pages/Register";
 import Navbar from "../components/Navbar";
 import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
+import EventList from "../pages/EventList";
+import CardDetails from "../pages/CardDetails"
 
 
 const AppRouter = () => {
   return (
     <Router>
       <Navbar/>
-      <Dashboard/>
+      
        <Routes>
-         <Route path="/" element={<Home />} />
+       <Route element={<Dashboard/>}>
+         <Route path="/" element={<EventList />} />
          <Route path="/register" element={<Register />} />
          <Route path="/login" element={<Login />} />
-
+         <Route path="/details" element={<CardDetails />} />
          <Route path="/event" element={<PrivateRouter />} >
            <Route path="" element={<Event />} />
          </Route>
          <Route path="/profile" element={<PrivateRouter />} >
            <Route path="" element={<Profile />} />
+         </Route>
          </Route>
        </Routes>
     </Router>
