@@ -6,8 +6,7 @@ import {
 } from "@mui/material";
 import GoogleIcon from "../assets/GoogleIcon";
 import { useNavigate } from 'react-router-dom'; // Yönlendirme için
-import { signInWithGoogle } from "../helper/firebase"; // Firebase yapılandırma dosyanızdan import edin
-
+import useAuthCall from "../hook/useAuthCall";
 const RegisterForm = ({
     values,
     errors,
@@ -17,6 +16,8 @@ const RegisterForm = ({
     handleSubmit,
     isSubmitting,
 }) => {
+    const { signInWithGoogle } = useAuthCall();
+
     const navigate = useNavigate(); // Yönlendirme hook'u
 
     const signUpGoogle = async () => {

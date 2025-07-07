@@ -1,12 +1,16 @@
 import { useDispatch } from "react-redux";
 import {
-    login,
-    logout,
-    signup,
+    fetchFail,
+    fetchStart,
+    loginSuccess,
+    logoutSuccess,
+    registerSuccess,
 } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "./useAxios";
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
+import { signInWithPopup } from 'firebase/auth'
+import { auth, googleProvider } from "../helper/firebase";
 
 const useAuthCall = () => {
     const dispatch = useDispatch();
@@ -18,12 +22,12 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithoutHeader.post(`users`, userInfo);
-            dispatch(signup(data));
+            dispatch(registerSuccess(data));
             navigate("/stock");
             toastSuccessNotify("Register is successful");
         } catch (error) {
             dispatch(fetchFail());
-            toastErrorNotify("Register failed")
+            toastErrorNotify("Register failed");
         }
     };
 
@@ -32,12 +36,12 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithoutHeader.post(`auth/login`, userInfo);
-            dispatch(login(data));
+            dispatch(loginSuccess(data));
             navigate("/stock");
             toastSuccessNotify("Login is successful");
         } catch (error) {
             dispatch(fetchFail());
-            toastErrorNotify("Login failed")
+            toastErrorNotify("Login failed");
         }
     };
 
@@ -46,16 +50,51 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithToken.get(`auth/logout`);
-            dispatch(logout());
-            toastSuccessNotify("Logout is successful");
-
+            dispatch(logoutSuccess());
             navigate("/");
+            toastSuccessNotify("Logout is successful");
         } catch (error) {
             dispatch(fetchFail());
         }
     };
 
-    return { register, login, logout };
-};
+    // Google ile giriş fonksiyonu
+    const signInWithGoogle = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            // Kullanıcı bilgileri result.user içinde bulunur
+            console.log(result);
+            return result.user;
+        } catch (error) {
+            // Hata yönetimi
+            if (error.code === 'auth/popup-closed-by-user') {
+                console.warn("Google giriş penceresi kullanıcı tarafından kapatıldı.");
+            } else {
+                console.error("Google ile oturum açılırken bir hata oluştu:", error);
+            }
+            throw error; // Hatayı çağırana ilet
+        }
+    };
 
-export default useAuthCall;
+    const loginWithGoogle = (navigate) => {
+        googleProvider.setCustomParameters({ prompt: "select_account" });
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                sessionStorage.setItem("userInfo", "true")
+                navigate("/")
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    return {
+        register,
+        login,
+        logout,
+        signInWithGoogle,
+        loginWithGoogle
+    }
+}
+
+export default useAuthCall
