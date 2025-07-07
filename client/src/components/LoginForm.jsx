@@ -7,7 +7,7 @@ import {
 import GoogleIcon from "../assets/GoogleIcon";
 import { object, string } from "yup";
 import { useNavigate } from 'react-router-dom'; // Yönlendirme için
-import { signInWithGoogle } from "../helper/firebase"; // Firebase yapılandırma dosyanızdan import edin
+import useAuthCall from "../hook/useAuthCall";
 
 export const loginSchema = object({
     email: string()
@@ -26,6 +26,8 @@ const LoginForm = ({
     handleSubmit,
     isSubmitting,
 }) => {
+    const { signInWithGoogle } = useAuthCall();
+
     const navigate = useNavigate(); // Yönlendirme hook'u
 
     const signUpGoogle = async () => {
