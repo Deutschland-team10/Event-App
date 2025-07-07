@@ -1,61 +1,50 @@
-import {createSlice} from '@reduxjs/toolkit';
-
-import { auth, googleProvider } from "../helper/firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
-
-
-const initialState = {
-    currentUser: {},
-  };
+import { createSlice } from "@reduxjs/toolkit";
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState,
+    name: "auth",
+
+    initialState: {
+        currentUser: null,
+        loading: false,
+        error: false,
+        token: null,
+    },
+
     reducers: {
-        setUser: (state, action) => {
-            state.user = action.payload;
+        fetchStart: (state) => {
+            state.loading = true;
+            state.error = false;
         },
-        clearUser: (state) => {
-            state.user = "";
-        }
-    }
+        registerSuccess: (state, { payload }) => {
+            console.log(payload);
+            state.currentUser = payload.data.username;
+            state.token = payload.token;
+            state.loading = true;
+        },
+        loginSuccess: (state, { payload }) => {
+            state.currentUser = payload?.user?.username;
+            state.token = payload?.token;
+            state.loading = false;
+            state.isAdmin = payload?.user?.isAdmin;
+        },
+        logoutSuccess: (state) => {
+            state.currentUser = null;
+            state.token = null;
+            state.loading = false;
+        },
+        fetchFail: (state) => {
+            state.loading = false;
+            state.error = true;
+        },
+    },
 });
-export const {setUser, clearUser} = authSlice.actions;
+
+export const {
+    fetchStart,
+    fetchFail,
+    registerSuccess,
+    loginSuccess,
+    logoutSuccess,
+} = authSlice.actions;
 
 export default authSlice.reducer;
-
-
-export const signup = (email, password,displayName,navigate) => {
-  createUserWithEmailAndPassword(auth, email, password);
-  sessionStorage.setItem("userInfo","true")
-  navigate("/")
-};
-
-export const login = (email, password,navigate) => {
-  signInWithEmailAndPassword(auth, email, password);
-  sessionStorage.setItem("userInfo","true")
-  navigate("/")
-};
-
-export const logout = () => {
-  sessionStorage.clear()
-  signOut(auth);
-  
-};
-
-export const loginWithGoogle = (navigate) => {
-  googleProvider.setCustomParameters({ prompt: "select_account" });
-  signInWithPopup(auth, googleProvider)
-    .then((result) => {
-      sessionStorage.setItem("userInfo","true")
-      navigate("/")
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
