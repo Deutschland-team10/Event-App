@@ -59,7 +59,6 @@ const Login = () => {
                         </Link>
                     </Box>
                 </Grid>
-
                 <AuthImage image={image} />
             </Grid>
         </Container>
