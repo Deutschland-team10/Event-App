@@ -1,4 +1,4 @@
-# Stock App 
+# Event App 
 Yüklü Olan Paketler
 - MUI and MUI icons
 - axios

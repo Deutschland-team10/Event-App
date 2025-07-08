@@ -21,9 +21,9 @@ const useAuthCall = () => {
         dispatch(fetchStart());
 
         try {
-            const { data } = await axiosWithoutHeader.post(`users`, userInfo);
+            const { data } = await axiosWithoutHeader.post(`auth/register`, userInfo);
             dispatch(registerSuccess(data));
-            navigate("/stock");
+            navigate("/");
             toastSuccessNotify("Register is successful");
         } catch (error) {
             dispatch(fetchFail());
@@ -37,7 +37,7 @@ const useAuthCall = () => {
         try {
             const { data } = await axiosWithoutHeader.post(`auth/login`, userInfo);
             dispatch(loginSuccess(data));
-            navigate("/stock");
+            navigate("/");
             toastSuccessNotify("Login is successful");
         } catch (error) {
             dispatch(fetchFail());
