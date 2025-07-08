@@ -6,7 +6,7 @@ const useAxios = () => {
     const { token } = useSelector((state) => state.auth);
 
     const axiosWithToken = axios.create({
-        baseURL: import.meta.env.VITE_BASE_URL, // burasi VITE_apiKey mi olacak, emin degilim? Stock-App .env'de kendi clarusway hesabi yazilmis.
+        baseURL: import.meta.env.VITE_BASE_URL, 
         headers: {
             Authorization: `Token ${token}`
         }
