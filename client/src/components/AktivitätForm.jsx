@@ -1,6 +1,3 @@
-// ModernEventForm bileşeni: Bir etkinlik oluşturma formudur.
-// MUI bileşenleri, Formik + Yup validasyonu, Leaflet haritası ve bazı ikonlar içerir.
-
 import React, { useState } from "react";
 import {
   Box,
@@ -35,6 +32,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
+
 // ChangeView component: Harita üzerindeki görünümü güncellemek için kullanılır
 function ChangeView({ center }) {
   const map = useMap();
@@ -42,7 +40,6 @@ function ChangeView({ center }) {
   return null;
 }
 
-// Yup şeması: Formdaki alanlar için kurallar tanımlanır
 const validationSchema = yup.object({
   title: yup.string().required("Etkinlik başlığı zorunlu"),
   description: yup.string().required("Açıklama zorunlu"),
@@ -56,9 +53,9 @@ const validationSchema = yup.object({
   address: yup.string().required("Adres gerekli"),
 });
 
-// Form bileşeni:
-const EventForm = ({ onClose, onSubmit }) => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+const AktivitätForm = ({onClose,onSubmit}) => {
+  
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [position, setPosition] = useState([36.8969, 30.7133]); // Başlangıç pozisyonu
   const [showMap, setShowMap] = useState(false);
 
@@ -82,18 +79,6 @@ const EventForm = ({ onClose, onSubmit }) => {
       }, 2000);
     },
   });
-
-  const handleChange = (e) => {
-    console.log(e);
-    setInfo({ ...info, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = () => {
-    // Database info bilgisini gönderme işlemi yapılacak
-    postEventData("events", info);
-  };
-
-  // Harita koordinatlarını adres üzerinden almak
   const handleShowMap = () => {
     if (!formik.values.address) {
       alert("Lütfen haritada görmek için bir adres girin.");
@@ -127,7 +112,6 @@ const EventForm = ({ onClose, onSubmit }) => {
     shadowSize: [41, 41],
   });
 
-  // Topluluk dropdown listesi için veriler
   const communityOptions = [
     { value: "technology", label: "Teknoloji" },
     { value: "art", label: "Sanat" },
@@ -148,47 +132,23 @@ const EventForm = ({ onClose, onSubmit }) => {
     "& .MuiFormHelperText-root": { color: "rgba(255,255,255,0.9)" },
   };
 
-  // Return JSX
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Paper
         elevation={8}
         sx={{
           p: 4,
-          maxWidth: 600,
-          mx: "auto",
           borderRadius: 3,
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <EventIcon /> Modern Etkinlik Oluştur
-          </Typography>
-          <IconButton onClick={onClose} sx={{ color: "white" }}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
+        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+          <EventIcon sx={{ mr: 1 }} />
+          Aktivitäten Erstellen
+        </Typography>
 
-        {/* Form başlangıcı */}
         <Box component="form" onSubmit={formik.handleSubmit}>
-          {/* Title alanı */}
           <TextField
             fullWidth
             id="title"
@@ -202,7 +162,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             sx={commonTextFieldStyles}
           />
 
-          {/* Description alanı */}
           <TextField
             fullWidth
             id="description"
@@ -220,16 +179,13 @@ const EventForm = ({ onClose, onSubmit }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <DescriptionIcon
-                    sx={{ color: "rgba(255,255,255,0.8)", mt: "-40px" }}
-                  />
+                  <DescriptionIcon sx={{ color: "rgba(255,255,255,0.8)" }} />
                 </InputAdornment>
               ),
             }}
             sx={commonTextFieldStyles}
           />
 
-          {/* Tarih alanı */}
           <DatePicker
             label="Etkinlik Tarihi"
             value={formik.values.date}
@@ -246,7 +202,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             )}
           />
 
-          {/* Topluluk dropdown */}
           <FormControl
             fullWidth
             margin="normal"
@@ -283,7 +238,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             </Select>
           </FormControl>
 
-          {/* Guest count alanı */}
           <TextField
             fullWidth
             id="guestCount"
@@ -307,7 +261,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             sx={commonTextFieldStyles}
           />
 
-          {/* Adres alanı */}
           <TextField
             fullWidth
             id="address"
@@ -327,7 +280,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             }}
             sx={commonTextFieldStyles}
           />
-
           {/* Harita gösterme butonu */}
           <Button
             variant="outlined"
@@ -372,7 +324,6 @@ const EventForm = ({ onClose, onSubmit }) => {
             </Fade>
           )}
 
-          {/* Submit butonu */}
           <Button
             color="primary"
             variant="contained"
@@ -382,10 +333,12 @@ const EventForm = ({ onClose, onSubmit }) => {
             sx={{
               mt: 3,
               py: 1.5,
-              background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+              background:
+                "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
               boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
               "&:hover": {
-                background: "linear-gradient(45deg, #FE6B8B 60%, #FF8E53 100%)",
+                background:
+                  "linear-gradient(45deg, #FE6B8B 60%, #FF8E53 100%)",
                 transform: "translateY(-2px)",
               },
               transition: "all 0.3s ease",
@@ -395,7 +348,6 @@ const EventForm = ({ onClose, onSubmit }) => {
           </Button>
         </Box>
 
-        {/* Snackbar bildirimi */}
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={2000}
@@ -407,4 +359,4 @@ const EventForm = ({ onClose, onSubmit }) => {
   );
 };
 
-export default EventForm;
+export default AktivitätForm;

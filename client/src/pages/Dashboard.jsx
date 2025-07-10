@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Drawer, Toolbar, Box, Dialog } from "@mui/material";
 import SidebarItems from "./SidebarItems";
 import { Outlet, useLocation } from "react-router-dom";
-import EventForm from "../components/EventForm";
+import EventForm from "./EventForm";
 import EventList from "./EventList";
 
 const drawerWidth = 240;
