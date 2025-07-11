@@ -14,7 +14,7 @@ router.route('/').get(isLogin, list).post(isLogin, create);
 
 router.route('/:id')
     .get(isLogin, read)
-    .put(isStaff, update)
+    .put(isLogin, update)
     .patch(isStaff, update)
     .delete(isStaff, deletee);
 

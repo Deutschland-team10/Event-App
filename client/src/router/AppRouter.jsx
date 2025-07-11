@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import Home from "../pages/Home";
 import Profile from "../pages/Profile"
+import ProfileForm from "../pages/ProfileEdit";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Navbar from "../components/Navbar";
@@ -27,6 +28,9 @@ const AppRouter = () => {
          </Route>
          <Route path="/profile" element={<PrivateRouter />} >
            <Route path="" element={<Profile />} />
+         </Route>
+         <Route path="/profile/edit" element={<PrivateRouter />}>
+          <Route path="" element={<ProfileForm />} />
          </Route>
          </Route>
        </Routes>

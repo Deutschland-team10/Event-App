@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Avatar, Card, CardContent, Typography, Grid } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,41 +14,57 @@ const Profile = () => {
     }
   }, []);
 
-  if (!user) return <p>Yükleniyor...</p>;
+ 
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <div className="bg-white rounded shadow p-6 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-3xl">
-            👤
-          </div>
-          <div>
-            <h2 className="text-xl font-bold">{user.name} {user.surname}</h2>
-            <p className="text-gray-500">@{user.username}</p>
-            <p className="text-gray-400">{user.email}</p>
-          </div>
-        </div>
-        <Button
-          variant="contained"
-          startIcon={<EditIcon />}
-          onClick={() => navigate("/profile/edit")}
-        >
-          Düzenle
-        </Button>
+    <div className="max-w-4xl mx-auto mt-10 px-4">
+      <div className="flex justify-center mb-6">
+        <Avatar
+          src={user.avatar || ""}
+          alt="Profil Resmi"
+          sx={{ width: 100, height: 100 }}
+        />
       </div>
 
-      <div className="bg-white mt-6 p-6 rounded shadow space-y-2">
-        <h3 className="font-semibold text-lg">Kişisel Bilgiler</h3>
-        <p><strong>Ad:</strong> {user.name}</p>
-        <p><strong>Soyad:</strong> {user.surname}</p>
-        <p><strong>Cinsiyet:</strong> {user.gender}</p>
-        <p><strong>Doğum Tarihi:</strong> {user.birthdate}</p>
-        <p><strong>Şehir:</strong> {user.city}</p>
-        <p><strong>İlgi Alanları:</strong> {user.interests?.join(", ")}</p>
-      </div>
+      <Card className="shadow-lg">
+        <CardContent>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <Typography variant="h5" fontWeight="bold">
+                {user.name} {user.surname}
+              </Typography>
+              <Typography color="text.secondary">@{user.username}</Typography>
+              <Typography color="text.secondary">{user.email}</Typography>
+            </div>
+            <Button
+              variant="contained"
+              startIcon={<EditIcon />}
+              onClick={() => navigate("/profile/edit")}
+            >
+              Düzenle
+            </Button>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography><strong>Cinsiyet:</strong> {user.gender}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography><strong>Doğum Tarihi:</strong> {user.birthdate}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography><strong>Şehir:</strong> {user.city}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography><strong>İlgi Alanları:</strong> {user.interests?.join(", ")}</Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
 export default Profile;
+
+

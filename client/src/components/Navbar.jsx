@@ -25,7 +25,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -93,25 +93,17 @@ function Navbar() {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/profile"); }}>
-                Profil
-              </MenuItem>
+              <Button onClick={() => navigate("/profile")}>
+               PROFİLE
+              </Button>
               <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/account"); }}>
-                Hesap
+               Hesap
               </MenuItem>
               <MenuItem onClick={handleLogout}>
-                Çıkış Yap
+               LOGOUT
               </MenuItem>
             </Menu>
 
-            <Button
-              color="inherit"
-              startIcon={<LogoutIcon />}
-              onClick={handleLogout}
-              sx={{ display: { xs: "none", md: "inline-flex" } }}
-            >
-              Logout
-            </Button>
           </Box>
         </Toolbar>
       </AppBar>
