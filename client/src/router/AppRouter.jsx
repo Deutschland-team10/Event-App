@@ -12,8 +12,6 @@ import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
 import EventForm from "../pages/EventForm";
 
-
-
 const AppRouter = () => {
   const { currentUser } = useSelector((state) => state.auth);
 
@@ -24,8 +22,6 @@ const AppRouter = () => {
 
       <Routes>
          <Route path="/" element={!currentUser && <StartPage />} />
-
-        
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         <Route element={<Dashboard />}>

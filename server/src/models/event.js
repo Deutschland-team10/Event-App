@@ -27,49 +27,49 @@ const EventSchema = new mongoose.Schema({
         }
     ],
 
-    categoryId:{
-        type:String,
-        required:true
+    categoryId: {
+        type: String,
+        required: true
     },
 
-   title:{
-    type: String,
-    trim:true,
-    required:true
-  },
-
-  description:{
-    type: String,
-    trim:true,
-    required:true
-  },
-
-  date:{
-    type: Date,
-    required:true
-  },
-  time:{
-    type: String,
-    trim:true,
-    required:true
-
-  },
-
-  location:{
-    type:String,
-    trim:true,
-    required:true
-  },
-
-  image: {
-      type: String,
-      trim: true,
+    title: {
+        type: String,
+        trim: true,
+        required: true
     },
 
+    description: {
+        type: String,
+        trim: true,
+        required: true
+    },
+
+    date: {
+        type: Date,
+        required: true
+    },
+
+    time: {
+        type: String,
+        trim: true,
+        required: true
+    },
+
+    location: {
+        type: String,
+        trim: true,
+        required: true
+    },
+
+    image: {
+        type: String,
+        trim: true,
+    },
 },
+
     {
         collection: "events",
-        timestamps:true
+        timestamps: true
     }
 )
 module.exports = mongoose.model("Event", EventSchema)
