@@ -22,10 +22,13 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
+import useAuthCall from "../hook/useAuthCall";
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
+  const { logout } = useAuthCall();
+
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -93,15 +96,46 @@ function Navbar() {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <Button onClick={() => navigate("/profile")}>
+              <Button onClick={() => navigate("/profile")}
+               color="inherit"
+               sx={{
+               "&:hover": {
+                backgroundColor: "secondary.main",
+                color:"white",
+                "& .MuiSvgIcon-root":{
+                  color:"red"
+                 }
+                },
+               ".MuiSvgIcon-root":{
+               ml:1
+               }
+
+               }}
+              >
                PROFİLE
               </Button>
               <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/account"); }}>
                Hesap
               </MenuItem>
-              <MenuItem onClick={handleLogout}>
-               LOGOUT
-              </MenuItem>
+              <Button
+               color="inherit"
+               onClick={logout}
+               sx={{
+               "&:hover": {
+                backgroundColor: "secondary.main",
+                color:"white",
+                "& .MuiSvgIcon-root":{
+                  color:"red"
+                 }
+                },
+               ".MuiSvgIcon-root":{
+               ml:1
+               }
+
+               }}
+               >
+               Logout <LogoutIcon/>
+              </Button>
             </Menu>
 
           </Box>

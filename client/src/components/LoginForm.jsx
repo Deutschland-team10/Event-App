@@ -34,7 +34,7 @@ const LoginForm = ({
         try {
             await signInWithGoogle();
             // Başarılı giriş sonrası yönlendirme
-            navigate('/'); // Kullanıcının yönlendirileceği sayfa (örneğin: /dashboard veya /home)
+            navigate('/event'); // Kullanıcının yönlendirileceği sayfa (örneğin: /dashboard veya /home)
             console.log("Google ile başarıyla oturum açıldı!");
         } catch (error) {
             console.error("Google ile oturum açma başarısız oldu:", error);

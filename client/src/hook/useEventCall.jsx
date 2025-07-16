@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import useAxios from "./useAxios";
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
+
 const useEventCall = () => {
     const dispatch = useDispatch();
     const { token } = useSelector((state) => state.auth);
