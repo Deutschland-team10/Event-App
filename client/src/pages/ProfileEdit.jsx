@@ -13,21 +13,24 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import useAxios from "../hook/useAxios";
+import useAuthCall from "../hook/useAuthCall";
+
 
 const ProfileForm = () => {
   const navigate = useNavigate();
+  const { updateUser }= useAuthCall();
   const { currentUser } = useSelector((state) => state.auth);
   const { axiosWithToken } = useAxios();
   const [formData, setFormData] = useState({
-    name: "",
-    surname: "",
-    email: "",
-    username: "",
-    gender: "",
-    city: "",
-    birthdate: "",
-    interests: [],
-    avatar: "",
+    firstName:currentUser?.firstName || "",
+    lastName: currentUser?.lastName || "",
+    email: currentUser?.email || "",
+    username: currentUser?.username || "",
+    gender: currentUser?.gender || "",
+    city: currentUser?.city ||"",
+    birthDate: currentUser?.birthDate || "",
+    interests: currentUser?.interests || [],
+    image: currentUser?.image || "",
   });
 
   useEffect(() => {
@@ -53,7 +56,7 @@ const ProfileForm = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, avatar: reader.result }));
+        setFormData((prev) => ({ ...prev, image: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -61,29 +64,19 @@ const ProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axiosWithToken.put(
-        `http://127.0.0.1:8000/profile/${currentUser._id}`,
-        formData
-      );
-      console.log(res);
-      // localStorage.setItem("userProfile", JSON.stringify(res.data.profile));
-      // toast.success("Profil başarıyla güncellendi!");
-      // navigate("/profile");
-    } catch (err) {
-      console.error(err);
-      toast.error("Profil güncellenemedi.");
-    }
+    console.log(formData);
+    updateUser(formData, currentUser._id)
+    
   };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 px-4">
       <div className="flex justify-center mb-6 flex-col items-center gap-2">
-        <Avatar src={formData.avatar} sx={{ width: 100, height: 100 }} />
+        <Avatar src={formData.image} sx={{ width: 100, height: 100 }} />
         <input type="file" accept="image/*" onChange={handleAvatarUpload} />
       </div>
 
-      <Card className="shadow-lg">
+      <Card className="shadow-lg mt-6">
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Typography variant="h6" className="mb-4 font-bold">
@@ -92,17 +85,21 @@ const ProfileForm = () => {
 
             <TextField
               label="Ad"
-              name="name"
-              value={formData.name}
+              name="firstName"
+              value={formData.firstName}
               onChange={handleChange}
+              variant="outlined"
               fullWidth
+              margin="normal"
             />
             <TextField
               label="Soyad"
-              name="surname"
-              value={formData.surname}
+              name="lastName"
+              value={formData.lastName}
               onChange={handleChange}
+              variant="outlined"
               fullWidth
+              margin="normal"
             />
             <TextField
               label="Kullanıcı Adı"
@@ -110,6 +107,8 @@ const ProfileForm = () => {
               value={formData.username}
               onChange={handleChange}
               fullWidth
+              margin="normal"
+              disabled
             />
             <TextField
               label="Email"
@@ -117,14 +116,17 @@ const ProfileForm = () => {
               value={formData.email}
               onChange={handleChange}
               fullWidth
+              margin="normal"
+              disabled
             />
             <TextField
               label="Doğum Tarihi"
-              name="birthdate"
+              name="birthDate"
               type="date"
-              value={formData.birthdate}
+              value={formData.birthDate}
               onChange={handleChange}
               fullWidth
+              margin="normal"
               InputLabelProps={{ shrink: true }}
             />
             <TextField
@@ -133,6 +135,7 @@ const ProfileForm = () => {
               value={formData.city}
               onChange={handleChange}
               fullWidth
+              margin="normal"
             />
 
             <TextField
@@ -142,10 +145,11 @@ const ProfileForm = () => {
               value={formData.gender}
               onChange={handleChange}
               fullWidth
+              margin="normal"
             >
-              <MenuItem value="Erkek">Erkek</MenuItem>
-              <MenuItem value="Kadın">Kadın</MenuItem>
-              <MenuItem value="Diğer">Diğer</MenuItem>
+              <MenuItem value="Male">Erkek</MenuItem>
+              <MenuItem value="Female">Kadın</MenuItem>
+              <MenuItem value="null">Diğer</MenuItem>
             </TextField>
 
             {[0, 1, 2].map((i) => (
@@ -155,21 +159,23 @@ const ProfileForm = () => {
                 value={formData.interests[i] || ""}
                 onChange={(e) => handleInterestChange(i, e.target.value)}
                 fullWidth
+                margin="normal"
               />
             ))}
 
-            <div className="flex gap-4 mt-6">
-              <Button type="submit" variant="contained" color="primary">
+            <div style={{ display: 'flex', gap: '16px', marginTop:'16px'}}>
+              <Button type="submit" variant="contained" color="success" >
                 Kaydet
               </Button>
               <Button
-                variant="outlined"
-                color="secondary"
+                variant="contained"
+                color="error"
                 onClick={() => navigate("/profile")}
               >
                 İptal
               </Button>
             </div>
+            
           </form>
         </CardContent>
       </Card>

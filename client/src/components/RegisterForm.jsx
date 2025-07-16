@@ -109,7 +109,6 @@ const RegisterForm = ({
             >
                 SUBMIT
             </Button>
-
             <Button
                 type="button"
                 variant="contained"
@@ -119,7 +118,7 @@ const RegisterForm = ({
             >
                 Weiter mit Google
             </Button>
-        </Box >
+        </Box>
     );
 };
 
