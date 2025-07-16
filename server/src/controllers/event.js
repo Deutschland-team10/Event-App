@@ -93,6 +93,7 @@ module.exports = {
       date: req.body.date,
       time: req.body.time,
       location: req.body.location,
+      image: req.body.image,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

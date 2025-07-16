@@ -61,8 +61,8 @@ module.exports = {
             }
         */
    
-    console.log(req.body);
-            if (req.user._id.toString() !== req.params.id.toString()) {
+   
+    if (req.user._id.toString() !== req.params.id.toString()) {
       throw new Error("You can not update someone else profıle");
     }
     const result = await User.updateOne({ _id: req.params.id }, req.body, {
