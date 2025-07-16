@@ -18,6 +18,4 @@ router.use('/categories', require('./category'));
 
 router.use('/chats', require('./chat&message'));
 
-router.use('/profile', require('./profile'));
-
 module.exports = router;

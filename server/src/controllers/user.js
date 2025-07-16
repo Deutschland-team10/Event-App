@@ -1,14 +1,13 @@
-"use strict"
+"use strict";
 /* -------------------------------------------------------
                 Event Project
 ------------------------------------------------------- */
 
-const User= require("../models/user")
+const User = require("../models/user");
 
 module.exports = {
-
-    list: async (req, res) => {
-        /*
+  list: async (req, res) => {
+    /*
             #swagger.tags = ["Users"]
             #swagger.summary = "List Users"
             #swagger.description = `
@@ -22,31 +21,31 @@ module.exports = {
             `
         */
 
-        const result = await res.getModelList(User);
+    const result = await res.getModelList(User);
 
-        res.status(200).send({
-            error: false,
-            details: await res.getModelListDetails(User),
-            result
-        });
-    },
+    res.status(200).send({
+      error: false,
+      details: await res.getModelListDetails(User),
+      result,
+    });
+  },
 
-    read: async (req, res) => {
-        /*
+  read: async (req, res) => {
+    /*
             #swagger.tags = ["Users"]
             #swagger.summary = "Get Single User"
         */
 
-        const result = await User.findById(req.params.id);
+    const result = await User.findById(req.params.id);
 
-        res.status(200).send({
-            error: false,
-            result
-        });
-    },
+    res.status(200).send({
+      error: false,
+      result,
+    });
+  },
 
-    update: async (req, res) => {
-        /*
+  update: async (req, res) => {
+    /*
             #swagger.tags = ["Users"]
             #swagger.summary = "Update User"
             #swagger.parameters['body'] = {
@@ -61,28 +60,41 @@ module.exports = {
                 }
             }
         */
+   
+    console.log(req.body);
+            if (req.user._id.toString() !== req.params.id.toString()) {
+      throw new Error("You can not update someone else profıle");
+    }
+    const result = await User.updateOne({ _id: req.params.id }, req.body, {
+      runValidators: true,
+    });
 
-        const result = await User.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
+    res.status(200).send({
+      error: false,
+      user: await User.findById(req.params.id),
+    });
+  },
 
-        res.status(200).send({
-            error: false,
-            result,
-            new: await User.findById(req.params.id)
-        });
-    },
-
-    deletee: async (req, res) => {
-        /*
+  deletee: async (req, res) => {
+    /*
             #swagger.tags = ["Users"]
             #swagger.summary = "Delete User"
         */
 
-        const result = await User.deleteOne({ _id: req.params.id });
+    if (req.user.id !== req.params.id.toString()) {
+        throw new Error("You can only delete your own profile");
+      
+    };
+    
 
-        res.status(result.deletedCount ? 204 : 404).send({
-            error: !result.deletedCount,
-            message: result.deletedCount ? 'Data deleted.' : 'Data is not found or already deleted.',
-            result
-        });
-    },
+    const result = await User.deleteOne({ _id: req.params.id });
+
+    res.status(result.deletedCount ? 204 : 404).send({
+      error: !result.deletedCount,
+      message: result.deletedCount
+        ? "Data deleted."
+        : "Data is not found or already deleted.",
+      result,
+    });
+  },
 };

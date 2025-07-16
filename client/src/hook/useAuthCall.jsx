@@ -5,6 +5,7 @@ import {
     loginSuccess,
     logoutSuccess,
     registerSuccess,
+    userUpdateSuccess,
 } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "./useAxios";
@@ -24,11 +25,26 @@ const useAuthCall = () => {
             const { data } = await axiosWithoutHeader.post(`auth/register`, userInfo);
             console.log('lıne 25',data);
             dispatch(registerSuccess(data));
-            navigate("/");
+            navigate("/event");
             toastSuccessNotify("Register is successful");
         } catch (error) {
             dispatch(fetchFail());
             toastErrorNotify("Register failed");
+        }
+    };
+
+
+    const updateUser = async (userInfo, id) => {
+        dispatch(fetchStart());
+        console.log(userInfo);
+        try {
+            const { data } = await axiosWithToken.put(`users/${id}`, userInfo);
+            dispatch(userUpdateSuccess(data));
+            navigate("/profile");
+            toastSuccessNotify("User updated succesfully");
+        } catch (error) {
+            dispatch(fetchFail());
+            toastErrorNotify("User update failed");
         }
     };
 
@@ -38,7 +54,8 @@ const useAuthCall = () => {
         try {
             const { data } = await axiosWithoutHeader.post(`auth/login`, userInfo);
             dispatch(loginSuccess(data));
-            navigate("/");
+            console.log(data);
+            navigate("/event");
             toastSuccessNotify("Login is successful");
         } catch (error) {
             dispatch(fetchFail());
@@ -94,7 +111,8 @@ const useAuthCall = () => {
         login,
         logout,
         signInWithGoogle,
-        loginWithGoogle
+        loginWithGoogle,
+        updateUser
     }
 }
 
