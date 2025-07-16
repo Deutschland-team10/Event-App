@@ -8,8 +8,8 @@ import Register from "../pages/Register";
 import Navbar from "../components/Navbar";
 import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
-import EventList from "../pages/EventList";
 import CardDetails from "../pages/CardDetails"
+import EventForm from "../pages/EventForm";
 
 
 const AppRouter = () => {
@@ -19,7 +19,7 @@ const AppRouter = () => {
       
        <Routes>
        <Route element={<Dashboard/>}>
-         <Route path="/" element={<EventList />} />
+         <Route path="/" element={<EventForm />} />
          <Route path="/register" element={<Register />} />
          <Route path="/login" element={<Login />} />
          <Route path="/details" element={<CardDetails />} />

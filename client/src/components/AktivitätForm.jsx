@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -31,12 +31,24 @@ import * as yup from "yup";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import useEventCall from "../hook/useEventCall";
 
+// Leaflet icon düzeltmesi
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 // ChangeView component: Harita üzerindeki görünümü güncellemek için kullanılır
 function ChangeView({ center }) {
   const map = useMap();
-  map.setView(center, 13);
+  React.useEffect(() => {
+    if (center && center.length === 2) {
+      map.setView(center, 13);
+    }
+  }, [center, map]);
   return null;
 }
 
@@ -53,64 +65,111 @@ const validationSchema = yup.object({
   address: yup.string().required("Adres gerekli"),
 });
 
-const AktivitätForm = ({onClose,onSubmit}) => {
-  
-   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [position, setPosition] = useState([36.8969, 30.7133]); // Başlangıç pozisyonu
+const AktivitätForm = ({ open, handleClose, initialState, onSubmit }) => {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [position, setPosition] = useState([51.1657, 10.4515]); // Başlangıç pozisyonu
   const [showMap, setShowMap] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
+  const { postEventData, putEventData } = useEventCall();
 
   const formik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
-      date: null,
-      community: "",
-      guestCount: "",
-      address: "",
+      title: initialState?.title || "",
+      description: initialState?.description || "",
+      date: initialState?.date ? new Date(initialState.date) : null,
+      community: initialState?.community || "",
+      guestCount: initialState?.guestCount || "",
+      address: initialState?.address || "",
     },
+    enableReinitialize: true, // Bu çok önemli - initialState değiştiğinde formu yeniden initialize eder
     validationSchema,
     onSubmit: (values) => {
-      setSnackbarOpen(true); // Başarılı gönderim bildirimi
-      onSubmit(values); // Ana parent bileşene veri gönderimi
-      formik.resetForm(); // Form sıfırlanır
-      setShowMap(false); // Harita gizlenir
+      setSnackbarOpen(true);
+      
+      // Koordinatları düzgün formatta gönder
+      const eventData = {
+        ...values,
+        coordinates: coordinates ? { 
+          lat: parseFloat(coordinates.lat), 
+          lng: parseFloat(coordinates.lng) 
+        } : null,
+        organizer: "Kullanıcı",
+        avatarGroup: [],
+        image: null,
+        id: initialState?._id || initialState?.id || Date.now()
+      };
+      
+      console.log('🚀 AktivitätForm - Form gönderilen veri:', eventData);
+      
+      // Eğer initialState varsa düzenleme, yoksa yeni kayıt
+      if (initialState?._id || initialState?.id) {
+        putEventData("events", eventData);
+      } else {
+        postEventData("events", eventData);
+      }
+      
+      // Dashboard'a da bilgi gönder
+      if (onSubmit) {
+        onSubmit(eventData);
+      }
+      
+      // Form temizle ve kapat
+      formik.resetForm();
+      setShowMap(false);
+      setCoordinates(null);
+      
       setTimeout(() => {
-        onClose(); // Modal veya form kapanır
+        handleClose();
       }, 2000);
     },
   });
-  const handleShowMap = () => {
-    if (!formik.values.address) {
+
+  // initialState değiştiğinde koordinatları güncelle
+  useEffect(() => {
+    if (initialState?.coordinates) {
+      setCoordinates({
+        lat: initialState.coordinates.lat,
+        lng: initialState.coordinates.lng
+      });
+      setPosition([initialState.coordinates.lat, initialState.coordinates.lng]);
+      setShowMap(true);
+    }
+  }, [initialState]);
+
+  const handleShowMap = async () => {
+    if (!formik.values.address.trim()) {
       alert("Lütfen haritada görmek için bir adres girin.");
       return;
     }
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-      formik.values.address
-    )}`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
+    
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        formik.values.address
+      )}&limit=1`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        
+        if (!isNaN(lat) && !isNaN(lon)) {
           setPosition([lat, lon]);
+          setCoordinates({ lat: lat, lng: lon });
           setShowMap(true);
+          console.log('Koordinatlar kaydedildi:', { lat, lng: lon });
         } else {
-          alert("Adres bulunamadı. Lütfen adresi kontrol edin.");
+          alert("Koordinatlar geçersiz. Lütfen adresi kontrol edin.");
         }
-      })
-      .catch((err) => console.log("Geocoding error:", err));
+      } else {
+        alert("Adres bulunamadı. Lütfen adresi kontrol edin.");
+      }
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      alert("Adres arama sırasında bir hata oluştu.");
+    }
   };
-
-  // Leaflet için özel ikon
-  const customMarkerIcon = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-    shadowSize: [41, 41],
-  });
 
   const communityOptions = [
     { value: "technology", label: "Teknoloji" },
@@ -122,30 +181,39 @@ const AktivitätForm = ({onClose,onSubmit}) => {
 
   const commonTextFieldStyles = {
     "& .MuiOutlinedInput-root": {
-      backgroundColor: "rgba(255,255,255,0.1)",
-      "& fieldset": { borderColor: "rgba(255,255,255,0.3)" },
-      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.5)" },
-      "&.Mui-focused fieldset": { borderColor: "white" },
+      backgroundColor: "#fafafa",
+      "& fieldset": { borderColor: "#e0e0e0" },
+      "&:hover fieldset": { borderColor: "#2196f3" },
+      "&.Mui-focused fieldset": { borderColor: "#1976d2" },
     },
-    "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.8)" },
-    "& .MuiInputBase-input": { color: "white" },
-    "& .MuiFormHelperText-root": { color: "rgba(255,255,255,0.9)" },
+    "& .MuiInputLabel-root": { color: "#555" },
+    "& .MuiInputBase-input": { color: "#333" },
+    "& .MuiFormHelperText-root": { color: "#666" },
+    marginBottom: 2
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Paper
-        elevation={8}
+        elevation={2}
         sx={{
           p: 4,
-          borderRadius: 3,
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
+          borderRadius: 2,
+          background: "#ffffff",
+          border: "1px solid #e8e8e8",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-          <EventIcon sx={{ mr: 1 }} />
-          Aktivitäten Erstellen
+        {/* Kapat butonu */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <IconButton onClick={handleClose} sx={{ color: '#666' }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Typography variant="h5" sx={{ fontWeight: 600, mb: 3, color: "#2c3e50", textAlign: "center" }}>
+          <EventIcon sx={{ mr: 1, color: "#1976d2" }} />
+          {initialState?._id || initialState?.id ? "Etkinlik Düzenle" : "Yeni Etkinlik"}
         </Typography>
 
         <Box component="form" onSubmit={formik.handleSubmit}>
@@ -179,7 +247,7 @@ const AktivitätForm = ({onClose,onSubmit}) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <DescriptionIcon sx={{ color: "rgba(255,255,255,0.8)" }} />
+                  <DescriptionIcon sx={{ color: "#1976d2" }} />
                 </InputAdornment>
               ),
             }}
@@ -207,10 +275,7 @@ const AktivitätForm = ({onClose,onSubmit}) => {
             margin="normal"
             error={formik.touched.community && Boolean(formik.errors.community)}
           >
-            <InputLabel
-              id="community-label"
-              sx={{ color: "rgba(255,255,255,0.8)" }}
-            >
+            <InputLabel id="community-label" sx={{ color: "#555" }}>
               Topluluk
             </InputLabel>
             <Select
@@ -222,11 +287,11 @@ const AktivitätForm = ({onClose,onSubmit}) => {
               onChange={formik.handleChange}
               sx={{
                 ...commonTextFieldStyles,
-                "& .MuiSelect-icon": { color: "rgba(255,255,255,0.8)" },
+                "& .MuiSelect-icon": { color: "#1976d2" },
               }}
               startAdornment={
                 <InputAdornment position="start">
-                  <PeopleIcon sx={{ color: "rgba(255,255,255,0.8)", ml: 1 }} />
+                  <PeopleIcon sx={{ color: "#1976d2", ml: 1 }} />
                 </InputAdornment>
               }
             >
@@ -254,7 +319,7 @@ const AktivitätForm = ({onClose,onSubmit}) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PeopleIcon sx={{ color: "rgba(255,255,255,0.8)" }} />
+                  <PeopleIcon sx={{ color: "#1976d2" }} />
                 </InputAdornment>
               ),
             }}
@@ -274,52 +339,70 @@ const AktivitätForm = ({onClose,onSubmit}) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LocationOnIcon sx={{ color: "rgba(255,255,255,0.8)" }} />
+                  <LocationOnIcon sx={{ color: "#1976d2" }} />
                 </InputAdornment>
               ),
             }}
             sx={commonTextFieldStyles}
           />
-          {/* Harita gösterme butonu */}
+
           <Button
             variant="outlined"
             onClick={handleShowMap}
             startIcon={<MapIcon />}
             sx={{
-              mt: 1,
+              mt: 2,
               mb: 2,
-              color: "white",
-              borderColor: "rgba(255,255,255,0.5)",
+              color: "#1976d2",
+              borderColor: "#1976d2",
+              backgroundColor: "#f5f5f5",
               "&:hover": {
-                borderColor: "white",
-                backgroundColor: "rgba(255,255,255,0.1)",
+                borderColor: "#1565c0",
+                backgroundColor: "#e3f2fd",
               },
             }}
           >
             Haritayı Göster
           </Button>
 
-          {/* Harita görünümü */}
-          {showMap && (
+          {showMap && coordinates && (
             <Fade in={showMap}>
-              <Box
-                sx={{ height: 250, mt: 2, borderRadius: 2, overflow: "hidden" }}
-              >
-                <MapContainer
-                  center={position}
-                  zoom={13}
-                  scrollWheelZoom={false}
-                  style={{ height: "100%", width: "100%" }}
+              <Box>
+                <Box
+                  sx={{ 
+                    height: 250, 
+                    mt: 2, 
+                    borderRadius: 2, 
+                    overflow: "hidden",
+                    border: '2px solid #e0e0e0'
+                  }}
                 >
-                  <ChangeView center={position} />
-                  <TileLayer
-                    attribution="&copy; OpenStreetMap"
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={position} icon={customMarkerIcon}>
-                    <Popup>{formik.values.address}</Popup>
-                  </Marker>
-                </MapContainer>
+                  <MapContainer
+                    center={position}
+                    zoom={13}
+                    scrollWheelZoom={false}
+                    style={{ height: "100%", width: "100%" }}
+                    key={`${position[0]}-${position[1]}`}
+                  >
+                    <ChangeView center={position} />
+                    <TileLayer
+                      attribution="&copy; OpenStreetMap contributors"
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={position}>
+                      <Popup>
+                        <strong>{formik.values.title || "Etkinlik"}</strong><br />
+                        {formik.values.address}<br />
+                        <small>Lat: {coordinates.lat.toFixed(6)}, Lng: {coordinates.lng.toFixed(6)}</small>
+                      </Popup>
+                    </Marker>
+                  </MapContainer>
+                </Box>
+                <Box sx={{ mt: 2, p: 2, bgcolor: "#f0f7ff", borderRadius: 1, border: "1px solid #e3f2fd" }}>
+                  <Typography variant="body2" sx={{ color: "#1976d2" }}>
+                    📍 Koordinatlar kaydedildi: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+                  </Typography>
+                </Box>
               </Box>
             </Fade>
           )}
@@ -333,26 +416,29 @@ const AktivitätForm = ({onClose,onSubmit}) => {
             sx={{
               mt: 3,
               py: 1.5,
-              background:
-                "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-              boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+              backgroundColor: "#1976d2",
+              color: "white",
+              fontWeight: 600,
               "&:hover": {
-                background:
-                  "linear-gradient(45deg, #FE6B8B 60%, #FF8E53 100%)",
-                transform: "translateY(-2px)",
+                backgroundColor: "#1565c0",
+                transform: "translateY(-1px)",
+                boxShadow: "0 4px 12px rgba(25, 118, 210, 0.3)",
               },
-              transition: "all 0.3s ease",
             }}
           >
-            Etkinlik Oluştur
+            {initialState?._id || initialState?.id ? "Güncelle" : "Oluştur"}
           </Button>
         </Box>
 
         <Snackbar
           open={snackbarOpen}
-          autoHideDuration={2000}
+          autoHideDuration={6000}
           onClose={() => setSnackbarOpen(false)}
-          message="Etkinlik başarıyla oluşturuldu!"
+          message={
+            initialState?._id || initialState?.id 
+              ? "Etkinlik başarıyla güncellendi!" 
+              : "Etkinlik başarıyla oluşturuldu!"
+          }
         />
       </Paper>
     </LocalizationProvider>

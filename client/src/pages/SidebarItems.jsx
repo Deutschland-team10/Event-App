@@ -12,7 +12,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import { useNavigate } from "react-router-dom";
 
-const SidebarItems = ({ setShowEventForm }) => {
+const SidebarItems = ({ setOpen }) => {
   const navigate = useNavigate();
 
   return (
@@ -49,7 +49,7 @@ const SidebarItems = ({ setShowEventForm }) => {
 
       <ListItem disablePadding>
         <ListItemButton
-          onClick={() => setShowEventForm(true)}
+          onClick={() => setOpen(true)}
           sx={{
             '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
             color: 'white',
