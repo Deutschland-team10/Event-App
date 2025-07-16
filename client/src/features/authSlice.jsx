@@ -1,15 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 const authSlice = createSlice({
     name: "auth",
-
     initialState: {
         currentUser: null,
         loading: false,
         error: false,
         token: null,
     },
-
     reducers: {
         fetchStart: (state) => {
             state.loading = true;
@@ -41,7 +38,6 @@ const authSlice = createSlice({
         },
     },
 });
-
 export const {
     fetchStart,
     fetchFail,
@@ -50,5 +46,4 @@ export const {
     logoutSuccess,
     userUpdateSuccess,
 } = authSlice.actions;
-
 export default authSlice.reducer;
