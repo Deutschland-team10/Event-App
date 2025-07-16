@@ -60,8 +60,7 @@ module.exports = {
                 }
             }
         */
-   
-   
+
     if (req.user._id.toString() !== req.params.id.toString()) {
       throw new Error("You can not update someone else profıle");
     }
@@ -82,10 +81,8 @@ module.exports = {
         */
 
     if (req.user.id !== req.params.id.toString()) {
-        throw new Error("You can only delete your own profile");
-      
-    };
-    
+      throw new Error("You can only delete your own profile");
+    }
 
     const result = await User.deleteOne({ _id: req.params.id });
 
