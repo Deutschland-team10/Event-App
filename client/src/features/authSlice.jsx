@@ -1,25 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 const authSlice = createSlice({
     name: "auth",
-
     initialState: {
         currentUser: null,
         loading: false,
         error: false,
         token: null,
     },
-
     reducers: {
         fetchStart: (state) => {
             state.loading = true;
             state.error = false;
         },
         registerSuccess: (state, { payload }) => {
-            console.log(payload);
             state.currentUser = payload.user
             state.token = payload.token;
-            state.loading = true;
+            state.loading = false;
+        },
+        userUpdateSuccess: (state, { payload }) => {
+            state.currentUser = payload.user
+            state.loading = false;
         },
         loginSuccess: (state, { payload }) => {
             state.currentUser = payload?.user
@@ -38,13 +38,12 @@ const authSlice = createSlice({
         },
     },
 });
-
 export const {
     fetchStart,
     fetchFail,
     registerSuccess,
     loginSuccess,
     logoutSuccess,
+    userUpdateSuccess,
 } = authSlice.actions;
-
 export default authSlice.reducer;
