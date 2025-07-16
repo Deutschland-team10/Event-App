@@ -8,15 +8,18 @@ import Register from "../pages/Register";
 import Navbar from "../components/Navbar";
 import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
-import EventList from "../pages/EventList";
 import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
+import EventForm from "../pages/EventForm";
+
+
 
 const AppRouter = () => {
   const { currentUser } = useSelector((state) => state.auth);
 
   return (
     <Router>
+
       {currentUser && <Navbar />}
 
       <Routes>
@@ -27,7 +30,7 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
         <Route element={<Dashboard />}>
           <Route path="/event" element={<PrivateRouter />}>
-            <Route path="" element={<EventList />} />
+            <Route path="" element={<EventForm />} />
           </Route>
           <Route path="/details" element={<PrivateRouter />}>
             <Route path="" element={<CardDetails />} />

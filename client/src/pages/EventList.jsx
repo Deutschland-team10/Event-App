@@ -28,14 +28,11 @@ const EventList = ({ events, showEventForm, setShowEventForm, onEventSubmit }) =
       </Typography>
 
       {/* Etkinlik Kartları */}
-      {events.length === 0 ? (
-        <Alert severity="info" sx={{ mb: 4, fontSize: "1.1rem" }}>
-          Henüz etkinlik bulunmuyor. İlk etkinliğinizi oluşturun!
-        </Alert>
-      ) : (
+     
         <Grid container spacing={3}>
           {events.map((event) => (
             <Grid item xs={12} sm={6} md={4} key={event.id}>
+            
               <EventCard
                 event={event}
                 onFavorite={(fav) =>
@@ -46,7 +43,7 @@ const EventList = ({ events, showEventForm, setShowEventForm, onEventSubmit }) =
             </Grid>
           ))}
         </Grid>
-      )}
+      
     </Container>
   );
 };
