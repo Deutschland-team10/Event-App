@@ -1,31 +1,28 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   Card, CardHeader, CardMedia, CardContent, CardActions, Collapse,
   Avatar, AvatarGroup, IconButton, Typography, Chip, Box
 } from '@mui/material';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EventIcon from '@mui/icons-material/Event';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-// Leaflet imports
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { Container } from '@mui/system';
+import useEventCall from '../../hook/useEventCall';
 
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
 const ExpandMore = styled((props) => {
@@ -55,33 +52,20 @@ const communityColors = {
   social: '#4caf50',
 };
 
-export default function EventCard({ event }) {
-  const {
-    id,
-    title = "Etkinlik Başlığı",
-    description = "Etkinlik açıklaması mevcut değil",
-    date,
-    community,
-    address = "Adres belirtilmedi",
-    avatarGroup = [],
-    image,
-    organizer = "Organizatör",
-    coordinates = null
-  } = event;
+export default function EventCard({ _id, title, description, date, image, community, guestCount, address, coordinates,organizer, handleOpen,setInitialState,avatarGroup }) {
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
-  const [isFavorited, setIsFavorited] = React.useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const handleExpandClick = (e) => {
-    e.stopPropagation(); // Kart tıklama olayını engelle
+    e.stopPropagation();
     setExpanded(!expanded);
   };
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     setIsFavorited(!isFavorited);
-    // İstersen burada prop callback ile favori durumu bildirilebilir
   };
 
   const handleShareClick = (e) => {
@@ -116,34 +100,53 @@ export default function EventCard({ event }) {
   });
 
   const communityInfo = getCommunityInfo(community);
-  const defaultLocation = { lat: 39.9334, lng: 32.8597 };
-  const mapCenter = coordinates || defaultLocation;
+
+  // Koordinat kontrolü - daha basit ve etkili
+  const hasValidCoordinates = coordinates && 
+    coordinates.lat && 
+    coordinates.lng &&
+    !isNaN(Number(coordinates.lat)) &&
+    !isNaN(Number(coordinates.lng));
+
+  const mapCenter = hasValidCoordinates ? 
+    [Number(coordinates.lat), Number(coordinates.lng)] : 
+    [51.1657, 10.4515];
+
+  // Debug için console log
+  console.log('EventCard Debug:', {
+    eventId: _id,
+    title: title,
+    coordinates: coordinates,
+    hasValidCoordinates: hasValidCoordinates,
+    mapCenter: mapCenter,
+    coordType: typeof coordinates
+  });
+
   const eventImage = image || `https://source.unsplash.com/400x200/?event,${community || 'conference'}`;
 
   const handleCardClick = () => {
-    navigate(`/details`, { state: {event}});
-  };
+  navigate(`/details`, { state: { event } });
+};
+ const {getDeleteData}= useEventCall()
 
   return (
-    
     <Card
-  onClick={handleCardClick}
-  sx={{
-    maxWidth: 800,
-    mx: "auto", // Ortalar
-    my: { xs: 4, md: 6 }, // Üstten ve alttan boşluk (responsive)
-    px: { xs: 2, md: 4 }, // İçeride yanlardan boşluk (isteğe bağlı)
-    borderRadius: 3,
-    cursor: "pointer",
-    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      transform: 'translateY(-4px)',
-      boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
-    }
-  }}
->
-
+      onClick={handleCardClick}
+      sx={{
+        maxWidth: 800,
+        mx: "auto",
+        my: { xs: 4, md: 6 },
+        px: { xs: 2, md: 4 },
+        borderRadius: 3,
+        cursor: "pointer",
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
+        }
+      }}
+    >
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500], fontWeight: 'bold' }}>
@@ -161,7 +164,7 @@ export default function EventCard({ event }) {
 
       <CardMedia
         component="img"
-        height="100"
+        height="200"
         image={eventImage}
         alt={`${title} görseli`}
         sx={{
@@ -211,14 +214,29 @@ export default function EventCard({ event }) {
             </AvatarGroup>
           </Box>
         )}
+
+        {/* Koordinat bilgisi gösterimi */}
+        {hasValidCoordinates && (
+          <Box sx={{ mt: 2, p: 1, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 1 }}>
+            <Typography variant="caption" color="text.secondary">
+              📍 Koordinatlar: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+            </Typography>
+          </Box>
+        )}
       </CardContent>
 
       <CardActions disableSpacing>
-        <IconButton onClick={handleFavoriteClick} sx={{ color: isFavorited ? 'red' : 'inherit' }}>
-          <FavoriteIcon />
+        <IconButton aria-label='add to favorites'
+        onClick={()=>getDeleteData("event",_id)}>
+          <DeleteOutlineIcon 
+            sx={{
+              "&:hover":{color:"red"}
+            }}
+          />
         </IconButton>
-        <IconButton onClick={handleShareClick}>
-          <ShareIcon />
+        <IconButton aria-label="share" onClick={()=>{handleOpen(); setInitialState({ _id, title, description, date, community, guestCount, address}) }} >
+          <EditIcon
+          sx= {{"&:hover":{color:"red"}}}/>
         </IconButton>
         <ExpandMore
           expand={expanded}
@@ -241,33 +259,91 @@ export default function EventCard({ event }) {
             </Box>
           )}
 
-          <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
             📍 Konum Haritası
           </Typography>
 
-          <Box sx={{ height: 250, borderRadius: 2, overflow: 'hidden', border: '2px solid #e0e0e0' }}>
-            <MapContainer
-              center={[mapCenter.lat, mapCenter.lng]}
-              zoom={coordinates ? 15 : 6}
-              style={{ height: '100%', width: '100%' }}
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[mapCenter.lat, mapCenter.lng]}>
-                <Popup>
-                  <strong>{title}</strong><br />
-                  {address}<br />
-                  <em>{formatDate(date)}</em>
-                </Popup>
-              </Marker>
-            </MapContainer>
+          <Box sx={{ mb: 2 }}>
+            {/* Debug bilgileri */}
+            <Box sx={{ mb: 1, p: 1, bgcolor: 'blue.50', borderRadius: 1 }}>
+              <Typography variant="caption">
+                Debug - Koordinatlar: {JSON.stringify(coordinates)} | 
+                Geçerli: {hasValidCoordinates ? 'EVET' : 'HAYIR'} |
+                Merkez: [{mapCenter[0]}, {mapCenter[1]}]
+              </Typography>
+            </Box>
+
+            {hasValidCoordinates ? (
+              <Box sx={{ 
+                height: 350, 
+                borderRadius: 2, 
+                overflow: 'hidden', 
+                border: '2px solid #e0e0e0',
+                position: 'relative',
+                bgcolor: 'grey.100'
+              }}>
+                {/* Koordinat bilgisi overlay */}
+                <Box sx={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8,
+                  backgroundColor: 'white',
+                  padding: '4px 8px',
+                  borderRadius: 1,
+                  zIndex: 1000,
+                  fontSize: '0.75rem',
+                  boxShadow: 1
+                }}>
+                  📍 {Number(coordinates.lat).toFixed(4)}, {Number(coordinates.lng).toFixed(4)}
+                </Box>
+                
+                <MapContainer
+                  center={mapCenter}
+                  zoom={14}
+                  scrollWheelZoom={false}
+                  style={{ height: '100%', width: '100%' }}
+                  key={`eventmap-${id}-${Date.now()}`}
+                >
+                  <TileLayer
+                    attribution='&copy; OpenStreetMap contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={mapCenter}>
+                    <Popup>
+                      <div style={{ minWidth: '200px' }}>
+                        <strong>{title}</strong><br />
+                        <small>{address}</small><br />
+                        <em>{formatDate(date)}</em><br />
+                        <small>Lat: {Number(coordinates.lat).toFixed(6)}, Lng: {Number(coordinates.lng).toFixed(6)}</small>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              </Box>
+            ) : (
+              <Box sx={{
+                height: 250,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255,0,0,0.1)',
+                borderRadius: 2,
+                border: '2px dashed red'
+              }}>
+                <LocationOnIcon sx={{ fontSize: 48, color: 'red', mb: 1 }} />
+                <Typography variant="body2" color="error" sx={{ fontWeight: 'bold' }}>
+                  ❌ Harita Gösterilemiyor
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', mt: 1 }}>
+                  Koordinat bilgisi eksik veya geçersiz<br />
+                  Raw data: {JSON.stringify(coordinates)}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </CardContent>
       </Collapse>
     </Card>
-    
   );
 }

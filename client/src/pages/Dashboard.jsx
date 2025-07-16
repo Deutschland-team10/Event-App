@@ -4,60 +4,51 @@ import { Drawer, Toolbar, Box, Dialog } from "@mui/material";
 import SidebarItems from "./SidebarItems";
 import { Outlet, useLocation } from "react-router-dom";
 import EventForm from "./EventForm";
-import EventList from "./EventList";
+import AktivitätForm from "../components/AktivitätForm"; // Modal için kullanacağız
 
 const drawerWidth = 240;
 
 const Dashboard = () => {
-  const [showEventForm, setShowEventForm] = useState(false);
-  const [events, setEvents] = useState([
-    {
-      id: 101,
-      image: "https://cdn.pixabay.com/photo/2022/07/17/13/41/sunflower-7327456_1280.jpg",
-      title: "React Workshop",
-      description: "Modern React uygulamaları geliştirme workshop'u...",
-      date: new Date("2024-07-15T14:00:00").toISOString(),
-      community: "technology",
-      address: "İTÜ, Bilgisayar Mühendisliği",
-      organizer: "Ahmet K.",
-      coordinates: { lat: 41.0082, lng: 28.9784 },
-      avatarGroup: [
-        { name: "Ali", avatar: "https://i.pravatar.cc/150?img=1" },
-        { name: "Ayşe", avatar: "https://i.pravatar.cc/150?img=2" },
-      ],
-    },
-    {
-      id: 102,
-      image: "https://cdn.pixabay.com/photo/2022/07/17/13/41/sunflower-7327456_1280.jpg",
-      title: "Node.js Eğitimi",
-      description: "Backend geliştirme eğitimi...",
-      date: new Date("2024-07-20T14:00:00").toISOString(),
-      community: "technology",
-      address: "Bonn",
-      organizer: "Mehmet Y.",
-      coordinates: { lat: 41.0082, lng: 28.9784 },
-      avatarGroup: [
-        { name: "Ali", avatar: "https://i.pravatar.cc/150?img=1" },
-        { name: "Ayşe", avatar: "https://i.pravatar.cc/150?img=2" },
-      ],
-    },
-  ]);
+  const [open, setOpen] = React.useState(false);
+  const [events, setEvents] = useState([]);
 
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
+  const [initialState, setInitialState] = useState({
+    title: "",
+    description: "",
+    date: null,
+    community: "",
+    guestCount: "",
+    address: ""
+  });
+
   const handleEventSubmit = (data) => {
     const newEvent = {
       ...data,
-      id: Date.now(),
       organizer: "Sen",
       avatarGroup: [],
       coordinates: null,
       date: data.date ? new Date(data.date).toISOString() : null,
       image: data.image || "https://cdn.pixabay.com/photo/2022/07/17/13/41/sunflower-7327456_1280.jpg",
     };
+    
     setEvents((prev) => [...prev, newEvent]);
-    setShowEventForm(false);
+    setOpen(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setInitialState({ 
+      title: "", 
+      description: "", 
+      date: null, 
+      community: "", 
+      guestCount: "", 
+      address: "" ,
+      coordinates:""
+    });
   };
 
   return (
@@ -78,7 +69,7 @@ const Dashboard = () => {
         }}
       >
         <Toolbar />
-        <SidebarItems setShowEventForm={setShowEventForm} />
+        <SidebarItems setOpen={setOpen} />
       </Drawer>
 
       {/* === Ana İçerik === */}
@@ -92,13 +83,13 @@ const Dashboard = () => {
       >
         <Toolbar />
         
-        {/* Ana sayfada EventList göster, diğer sayfalarda Outlet */}
+        {/* Ana sayfada EventForm göster, diğer sayfalarda Outlet */}
         {isHomePage ? (
-          <EventList 
+          <EventForm 
             events={events}
-            showEventForm={showEventForm}
-            setShowEventForm={setShowEventForm}
-            onEventSubmit={handleEventSubmit}
+            setEvents={setEvents}
+            setOpen={setOpen}
+            setInitialState={setInitialState}
           />
         ) : (
           <Outlet />
@@ -107,8 +98,8 @@ const Dashboard = () => {
 
       {/* === EventForm Modal === */}
       <Dialog
-        open={showEventForm}
-        onClose={() => setShowEventForm(false)}
+        open={open}
+        onClose={handleClose}
         fullWidth
         maxWidth="md"
         PaperProps={{
@@ -119,10 +110,12 @@ const Dashboard = () => {
           },
         }}
       >
-        <EventForm
-          onClose={() => setShowEventForm(false)}
+        {open &&<AktivitätForm
+          open={open}
+          handleClose={handleClose}
+          initialState={initialState}
           onSubmit={handleEventSubmit}
-        />
+        />}
       </Dialog>
     </Box>
   );
