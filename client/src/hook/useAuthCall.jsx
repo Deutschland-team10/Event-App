@@ -69,8 +69,8 @@ const useAuthCall = () => {
         try {
             const { data } = await axiosWithToken.get(`auth/logout`);
             dispatch(logoutSuccess());
-            navigate("/");
             toastSuccessNotify("Logout is successful");
+            navigate("/");
         } catch (error) {
             dispatch(fetchFail());
         }
@@ -104,7 +104,7 @@ const useAuthCall = () => {
             .catch((error) => {
                 console.log(error);
             })
-    }
+    };
 
     return {
         register,
@@ -113,7 +113,7 @@ const useAuthCall = () => {
         signInWithGoogle,
         loginWithGoogle,
         updateUser
-    }
-}
+    };
+};
 
-export default useAuthCall
+export default useAuthCall;
