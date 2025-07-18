@@ -47,10 +47,10 @@ function Navbar() {
   return (
     <>
       <CssBaseline />
-      <AppBar position="fixed" color="primary" sx={{ zIndex: 1300 }}>
+      <AppBar position="fixed" sx={{ zIndex: 1300 ,background: "linear-gradient(180deg, #667eea 0%, #764ba2 100%)",}}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6" noWrap component="div" onClick={() => navigate("/home")} sx={{ cursor: "pointer" }}>
-            Dashboard
+            Event Logo
           </Typography>
 
 
