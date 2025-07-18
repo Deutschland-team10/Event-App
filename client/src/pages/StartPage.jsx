@@ -11,7 +11,7 @@ const StartPage = () => {
         <h1 className="text-2xl font-bold tracking-tight">GEMEINSAM ERLEBEN<span className="text-sm font-normal ml-1">.com</span></h1>
         <div>
           <a href="/login" className="text-sm text-gray-700 mr-4">Bereits Mitglied?</a>
-          <Button variant="outlined" size="small">Login</Button>
+          <Button type="button" variant="outlined" size="medium" href="/login">Login</Button>
         </div>
       </div>
 
@@ -29,7 +29,7 @@ const StartPage = () => {
           <p className="text-gray-600 mb-6">
             Mach mit, wenn du mehr erleben und dabei neue Leute treffen willst.
           </p>
-          <Button variant="contained" size="large" color="primary">
+          <Button variant="contained" size="large" color="success"  href="/register">
             Kostenlos mitmachen
           </Button>
           <div className="flex gap-4 mt-6">
