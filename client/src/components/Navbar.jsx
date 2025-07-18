@@ -120,7 +120,7 @@ function Navbar() {
               </MenuItem>
               <Button
                color="inherit"
-               onClick={logout}
+               onClick={()=> logout()}
                sx={{
                "&:hover": {
                 backgroundColor: "secondary.main",
