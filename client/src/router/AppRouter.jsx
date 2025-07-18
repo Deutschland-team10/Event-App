@@ -10,7 +10,7 @@ import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
-import EventForm from "../pages/EventForm";
+import CreateEvent from "../pages/CreateEvent";
 
 const AppRouter = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -21,21 +21,15 @@ const AppRouter = () => {
       {currentUser && <Navbar />}
 
       <Routes>
-         <Route path="/" element={!currentUser && <StartPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        <Route element={<Dashboard />}>
-          <Route path="/event" element={<PrivateRouter />}>
-            <Route path="" element={<EventForm />} />
-          </Route>
-          <Route path="/details" element={<PrivateRouter />}>
-            <Route path="" element={<CardDetails />} />
-          </Route>
-          <Route path="/profile" element={<PrivateRouter />}>
-            <Route path="" element={<Profile />} />
-          </Route>
-          <Route path="/profile/edit" element={<PrivateRouter />}>
-            <Route path="" element={<ProfileForm />} />
+        <Route path="/" element={!currentUser && <StartPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route  element={<PrivateRouter />}>
+          <Route path="/home" element={<Dashboard />}>
+            <Route path="create-event" element={<CreateEvent />} />
+            <Route path="detail" element={<CardDetails />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="profile/edit" element={<ProfileForm />} />
           </Route>
         </Route>
       </Routes>
