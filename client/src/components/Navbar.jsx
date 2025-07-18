@@ -49,9 +49,10 @@ function Navbar() {
       <CssBaseline />
       <AppBar position="fixed" color="primary" sx={{ zIndex: 1300 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" onClick={() => navigate("/home")} sx={{ cursor: "pointer" }}>
             Dashboard
           </Typography>
+
 
           <Box
             sx={{
@@ -96,7 +97,7 @@ function Navbar() {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <Button onClick={() => navigate("/profile")}
+              <Button onClick={() => navigate("/home/profile")}
                color="inherit"
                sx={{
                "&:hover": {
@@ -114,7 +115,7 @@ function Navbar() {
               >
                PROFİLE
               </Button>
-              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/account"); }}>
+              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/account"); }}>
                Hesap
               </MenuItem>
               <Button
