@@ -6,7 +6,6 @@
 const Event = require("../models/event");
 const User = require("../models/user");
 const Group = require("../models/group");
-const Category = require("../models/category");
 
 module.exports = {
     list: async (req, res) => {
@@ -20,8 +19,7 @@ module.exports = {
                         <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>
                         <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>
                         <li>URL/?<b>page=2&limit=1</b></li>
-                    </ul>`      
-            
+                    </ul>`
         */
 
         const result = await res.getModelList(Event);
@@ -42,15 +40,19 @@ module.exports = {
                 require:true,
                 schema:{
                  $ref:'#/definitions/Event',
-    
                 }
-            
             }
-            
+            #swagger.parameters['image']={
+                in:"formData",
+                type:"file",
+                required:false,
+                name:"image"
+            }
         */
 
         const participantInfos = req.body.participants || [];
         const groupInfos = req.body.sharedGroup || [];
+        const imagePath = req.file ? '/uploads/' + req.file.filename : null;
 
         const participantIds = [];
         const groupIds = [];
@@ -93,7 +95,7 @@ module.exports = {
             date: req.body.date,
             time: req.body.time,
             location: req.body.location,
-            image: req.body.image,
+            image: imagePath,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
@@ -134,10 +136,19 @@ module.exports = {
                 schema:{
                   $ref:'#/definitions/Event',
                 }
-            
             }
-            
+            #swagger.parameters['image']={
+                in:"formData",
+                type:"file",
+                required:false,
+                name:"image"
+            }
         */
+
+        // Eğer yeni bir resim yüklendiyse
+        if (req.file) {
+            updateData.image = '/upload/' + req.file.filename;
+        }
 
         const result = await Event.updateOne({ _id: req.params.id }, req.body, {
             new: true,
