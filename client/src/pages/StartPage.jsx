@@ -5,31 +5,33 @@ import { Download } from "lucide-react";
 
 const StartPage = () => {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center px-4 pt-8 pb-16">
+    <div style={{display: "flex", flexDirection: "column", alignItems: "center",justifyContent:"space-between", padding: "1rem", marginLeft: "2rem", marginRight: "2rem"}}>
       {/* Header */}
-      <div className="w-full max-w-6xl flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">GEMEINSAM ERLEBEN<span className="text-sm font-normal ml-1">.com</span></h1>
-        <div>
-          <a href="/login" className="text-sm text-gray-700 mr-4">Bereits Mitglied?</a>
-          <Button type="button" variant="outlined" size="medium" href="/login">Login</Button>
+      <div style={{display: "flex", justifyContent: "space-between", width: "100%", marginBottom: "2rem"}}>
+        <h1 className="text-2xl  tracking-tight">GEMEINSAM ERLEBEN<span className="text-sm ml-1">.com</span></h1>
+        <div style={{display: "flex", alignItems: "center", justifyContent:"flex-end", gap: "1rem"}}>
+          <a href="/login" style={{fontSize:"24px",color:"gray", textDecoration:"none"}}>Bereits Mitglied?</a>
+          <Button type="button" variant="outlined" href="/login" style={{borderRadius:"20px",color:"blue",fontSize:"24px", borderColor:"blue"}}>Login</Button>
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className="w-full max-w-6xl flex flex-col-reverse lg:flex-row gap-6">
+      <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%"}}>
         {/* Left - Text */}
         <motion.div
-          className="flex-1 bg-gray-100 p-6 rounded-xl flex flex-col justify-center"
+          style={{flex: 1, display: "flex", alignItems:"center", flexDirection: "column", justifyContent: "center",borderRadius:"2rem",height:"670px", backgroundColor:"lightgray", padding: "1rem",gap:"1rem",marginTop: "1rem"}}
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <h2 className="text-3xl font-semibold mb-4">
+          <div>
+          <h2 style={{fontSize: "40px", textAlign:"left"}}>
             Finde Menschen mit gleichen Interessen & tolle Aktivitäten
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p style={{fontSize: "20px", textAlign: "left", marginTop: "1rem"}}>
             Mach mit, wenn du mehr erleben und dabei neue Leute treffen willst.
           </p>
-          <Button variant="contained" size="large" color="success"  href="/register">
+          </div>
+          <Button variant="contained" size="sm" color="success" href="/register">
             Kostenlos mitmachen
           </Button>
           <div className="flex gap-4 mt-6">
@@ -47,24 +49,28 @@ const StartPage = () => {
         </motion.div>
 
         {/* Right - Images */}
-        <motion.div
-          className="flex-1 grid grid-cols-2 gap-4"
+        <div
+          style={{display:"flex" ,flexDirection: "column",padding: "1rem",gap:"1rem", height:"100%",maxWidth:"900px"}}
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <img src="/img/friends.jpg" alt="Friends" className="rounded-xl object-cover h-48 w-full" />
-          <img src="/img/dance.jpg" alt="Dancing" className="rounded-xl object-cover h-48 w-full" />
-          <img src="/img/hike.jpg" alt="Hiking" className="rounded-xl object-cover h-48 w-full" />
-          <img src="/img/bike.jpg" alt="Biking" className="rounded-xl object-cover h-48 w-full" />
-        </motion.div>
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+          <img src="/img/friends.jpg" alt="Friends" style={{borderRadius:"2rem", maxWidth:"550px" }} />
+          <img src="/img/dance.jpg" alt="Dancing" style={{borderRadius:"2rem", width:"100%"}} />
+          </div>
+          <div style={{ display: 'flex', gap: '16px'}}>
+          <img src="/img/hike.jpg" alt="Hiking" style={{borderRadius:"2rem", width:"100%" }} />
+          <img src="/img/bike.jpg" alt="Biking" style={{borderRadius:"2rem", width:"100%"}} />
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-16 text-center max-w-4xl text-gray-700">
-        <h3 className="text-xl font-semibold mb-2">
+      <div style={{textAlign: "center", marginTop: "2rem", padding: "1rem", backgroundColor: "#f8f8f8", borderRadius: "8px", color:"gray"}  }>
+        <p style={{fontSize: "40px", fontWeight: "bold"}}>
           Die Plattform, um Leute in deiner Nähe kennenzulernen
-        </h3>
-        <p>
+        </p>
+        <p style={{fontSize: "20px", marginTop: "1rem", marginLeft: "22rem", marginRight: "22rem"}}>
           Nimm bei <strong>GemeinsamErleben</strong> an spannenden Aktivitäten teil oder organisiere deine eigenen.
           Finde Gleichgesinnte für Freizeit, Sport und Reisen und füllt gemeinsam euer Leben mit mehr Abwechslung und schönen Erlebnissen.
         </p>
