@@ -22,9 +22,6 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import PeopleIcon from "@mui/icons-material/People";
 import MapIcon from "@mui/icons-material/Map";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -86,28 +83,13 @@ const GroupForm = ({onClose, onSubmit}) => {
       // Koordinatları düzgün formatta gönder - bu çok önemli!
       const eventData = {
         ...values,
-        coordinates: coordinates ? { 
-          lat: parseFloat(coordinates.lat), 
-          lng: parseFloat(coordinates.lng) 
-        } : null,
         organizer: "Kullanıcı",
         avatarGroup: [],
         image: null,
         id: Date.now()
       };
       
-      console.log('🚀 AktivitätForm - Form gönderilen veri:', eventData);
-      console.log('🎯 AktivitätForm - Koordinatlar detay:', {
-        raw: coordinates,
-        final: eventData.coordinates,
-        hasCoords: !!eventData.coordinates,
-        types: {
-          rawLat: typeof coordinates?.lat,
-          rawLng: typeof coordinates?.lng,
-          finalLat: typeof eventData.coordinates?.lat,
-          finalLng: typeof eventData.coordinates?.lng
-        }
-      });
+    
       
       onSubmit(eventData);
       formik.resetForm();
@@ -119,41 +101,6 @@ const GroupForm = ({onClose, onSubmit}) => {
     },
   });
 
-  const handleShowMap = async () => {
-    if (!formik.values.address.trim()) {
-      alert("Lütfen haritada görmek için bir adres girin.");
-      return;
-    }
-    
-    try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        formik.values.address
-      )}&limit=1`;
-      
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        
-        if (!isNaN(lat) && !isNaN(lon)) {
-          setPosition([lat, lon]);
-          // Koordinatları state'e kaydet
-          setCoordinates({ lat: lat, lng: lon });
-          setShowMap(true);
-          console.log('Koordinatlar kaydedildi:', { lat, lng: lon });
-        } else {
-          alert("Koordinatlar geçersiz. Lütfen adresi kontrol edin.");
-        }
-      } else {
-        alert("Adres bulunamadı. Lütfen adresi kontrol edin.");
-      }
-    } catch (error) {
-      console.error("Geocoding error:", error);
-      alert("Adres arama sırasında bir hata oluştu.");
-    }
-  };
 
   const communityOptions = [
     { value: "technology", label: "Teknoloji" },
@@ -326,66 +273,8 @@ const GroupForm = ({onClose, onSubmit}) => {
             sx={commonTextFieldStyles}
           />
 
-          <Button
-            variant="outlined"
-            onClick={handleShowMap}
-            startIcon={<MapIcon />}
-            sx={{
-              mt: 2,
-              mb: 2,
-              color: "#1976d2",
-              borderColor: "#1976d2",
-              backgroundColor: "#f5f5f5",
-              "&:hover": {
-                borderColor: "#1565c0",
-                backgroundColor: "#e3f2fd",
-              },
-            }}
-          >
-            Haritayı Göster
-          </Button>
-
-          {showMap && coordinates && (
-            <Fade in={showMap}>
-              <Box>
-                <Box
-                  sx={{ 
-                    height: 250, 
-                    mt: 2, 
-                    borderRadius: 2, 
-                    overflow: "hidden",
-                    border: '2px solid #e0e0e0'
-                  }}
-                >
-                  <MapContainer
-                    center={position}
-                    zoom={13}
-                    scrollWheelZoom={false}
-                    style={{ height: "100%", width: "100%" }}
-                    key={`${position[0]}-${position[1]}`}
-                  >
-                    <ChangeView center={position} />
-                    <TileLayer
-                      attribution="&copy; OpenStreetMap contributors"
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={position}>
-                      <Popup>
-                        <strong>{formik.values.title || "Etkinlik"}</strong><br />
-                        {formik.values.address}<br />
-                        <small>Lat: {coordinates.lat.toFixed(6)}, Lng: {coordinates.lng.toFixed(6)}</small>
-                      </Popup>
-                    </Marker>
-                  </MapContainer>
-                </Box>
-                <Box sx={{ mt: 2, p: 2, bgcolor: "#f0f7ff", borderRadius: 1, border: "1px solid #e3f2fd" }}>
-                  <Typography variant="body2" sx={{ color: "#1976d2" }}>
-                    📍 Koordinatlar kaydedildi: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Fade>
-          )}
+         
+          
 
           <Button
             color="primary"
@@ -406,7 +295,7 @@ const GroupForm = ({onClose, onSubmit}) => {
               },
             }}
           >
-            Group Oluştur
+            Group Form
           </Button>
         </Box>
 

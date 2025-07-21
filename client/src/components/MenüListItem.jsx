@@ -22,7 +22,7 @@ const links = [
 const MenüListItem = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const [open, setOpen] = useState(false)
+
 
 
 
@@ -36,8 +36,11 @@ const MenüListItem = () => {
             <ListItemButton
               onClick={() => navigate(item.url)}
               sx={{
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
+                backgroundColor: item.url === location.pathname ? 'rgba(255,255,255,0.1)' : 'transparent',
                 color: 'white',
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.2)'
+                }
               }}
             >
               {/* <ListItemIcon sx={{ color: 'white' }}>
