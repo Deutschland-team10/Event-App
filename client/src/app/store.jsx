@@ -8,7 +8,7 @@ import {
     REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
-// import eventReducer from "../features/eventSlice";
+ import eventReducer from "../features/eventSlice";
 
 const persistConfig = {
     key: 'root',
@@ -19,7 +19,8 @@ const persistedReducer = persistReducer(persistConfig, authReducer)
 
 const store = configureStore({
     reducer: {
-        auth: persistedReducer
+        auth: persistedReducer,
+        event:eventReducer
     },
 
     middleware: (getDefaultMiddleware) =>

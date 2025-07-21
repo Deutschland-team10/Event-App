@@ -6,7 +6,8 @@ import MenüListItem from "../components/MenüListItem";
 
 const drawerWidth = 240;
 
-const Dashboard = () => {
+const Dashboard = (props) => {
+  const { window } = props;
   const [Open, setOpen] =useState(false);
 
   const handleDrawerClose = () => {
@@ -17,11 +18,14 @@ const Dashboard = () => {
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
   };
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
   
   return (
     <Box sx={{ display: "flex" }}>
       {/* === Sidebar === */}
       <Drawer
+      container={container}
         variant="permanent"
         anchor="left"
         open={Open}

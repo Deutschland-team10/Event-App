@@ -10,7 +10,7 @@ const { isLogin, isAdmin } = require('../middlewares/permissions');
 
 // URL: /category
 
-router.route('/').get(isLogin, list).post(isAdmin, create);
+router.route('/').get(isLogin, list).post( create);
 
 router.route('/:id')
     .get(isLogin, read)

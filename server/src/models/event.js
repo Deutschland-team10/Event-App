@@ -15,7 +15,7 @@ const EventSchema = new mongoose.Schema({
     participants: [
         {
             type: String,
-            required: true
+           //required: true {event katilimcilar olmadan da olusturulabilir}
         }
     ],
 
@@ -23,7 +23,7 @@ const EventSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Group",
-            required: true,
+           // required: true,
         }
     ],
 

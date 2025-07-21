@@ -24,9 +24,12 @@ const useEventCall = () => {
         dispatch(fetchStart());
         try {
             const { data } = await axiosWithToken.get(`${url}`);
+            console.log(data);
             dispatch(eventSuccess({ data, url }));
         } catch (error) {
             dispatch(fetchFail());
+            console.log(error);
+            toastErrorNotify(error?.response?.data?.message || "Something went wrong!");
         }
     };
     /* -------------------------------------------------------------------------- */
@@ -49,6 +52,7 @@ const useEventCall = () => {
         dispatch(fetchStart());
         try {
             const { data } = await axiosWithToken.post(`${url}`, info);
+            console.log(data);
             getEventData(url);
             toastSuccessNotify(`${url} is saved successfully!`);
         } catch (error) {
