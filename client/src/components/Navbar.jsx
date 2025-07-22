@@ -66,7 +66,7 @@ function Navbar() {
           >
             <SearchIcon />
             <InputBase
-              placeholder="Ara…"
+              placeholder="Suchen…"
               sx={{ ml: 1, color: "white", flex: 1 }}
               inputProps={{ "aria-label": "search" }}
             />

@@ -40,7 +40,7 @@ const useAuthCall = () => {
         try {
             const { data } = await axiosWithToken.put(`users/${id}`, userInfo);
             dispatch(userUpdateSuccess(data));
-            navigate("/profile");
+            navigate("/home/profile")
             toastSuccessNotify("User updated succesfully");
         } catch (error) {
             dispatch(fetchFail());

@@ -40,7 +40,7 @@ const Profile = () => {
               variant="contained"
               startIcon={<EditIcon />}
               color="warning"
-              onClick={() => navigate("/profile/edit")}
+              onClick={() => navigate("/home/profile/edit")}
             >
               Düzenle
             </Button>
