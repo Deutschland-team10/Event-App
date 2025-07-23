@@ -61,7 +61,8 @@ const ProfileForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        updateUser(formData, currentUser._id)
+        updateUser(formData, currentUser._id);
+        
 
     };
 
@@ -119,7 +120,7 @@ const ProfileForm = () => {
                             label="Doğum Tarihi"
                             name="birthDate"
                             type="date"
-                            value={formData.birthDate}
+                            value={formData.birthDate ? formData.birthDate.slice(0, 10) : ""}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -166,7 +167,7 @@ const ProfileForm = () => {
                             <Button
                                 variant="contained"
                                 color="error"
-                                onClick={() => navigate("/profile")}
+                                onClick={() => navigate("/home/profile")}
                             >
                                 İptal
                             </Button>
