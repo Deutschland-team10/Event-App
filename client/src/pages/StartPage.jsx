@@ -31,7 +31,7 @@ const StartPage = () => {
         }}
       >
         <Typography variant="h5">
-          GEMEINSAM ERLEBEN<span style={{ fontSize: "14px" }}>.com</span>
+          GEMEINSAM ERLEBEN
         </Typography>
 
         <Box display="flex" alignItems="center" gap={2}>
