@@ -5,7 +5,7 @@ import {
     eventSuccess,
     getEventCategoryGroupSuccess,
     getMessageSuccess,
-} from "../features/eventSlice";
+} from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import axios from "axios";

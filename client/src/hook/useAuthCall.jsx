@@ -6,7 +6,7 @@ import {
     logoutSuccess,
     registerSuccess,
     userUpdateSuccess,
-} from "../features/authSlice";
+} from "../features/chat/hooks/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "./useAxios";
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
