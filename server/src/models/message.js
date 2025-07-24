@@ -11,19 +11,21 @@ const MessageSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+  
     chatId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Chat",
         required: true,
     },
+    
     content: {
         type: String,
         required: true,
     },
-    eventId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Event",  
-    }
+    // eventId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref:"Event",  
+    // }
 }, {
     collection: "messages",
     timestamps: true
