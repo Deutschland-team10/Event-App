@@ -5,7 +5,6 @@ import Profile from "../pages/Profile";
 import ProfileForm from "../pages/ProfileEdit";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Navbar from "../components/Navbar";
 import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
@@ -17,11 +16,8 @@ const AppRouter = () => {
 
   return (
     <Router>
-
-      {/* {currentUser && <Navbar />} */}
-
       <Routes>
-        <Route path="/" element={!currentUser && <StartPage />} />
+        <Route path="/" element={<StartPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="home" element={<PrivateRouter />}>
