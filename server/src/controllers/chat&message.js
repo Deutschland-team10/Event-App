@@ -23,8 +23,7 @@ module.exports = {
         */
 
     //const result = await res.getModelList(message);
-    //!sadece login olmus user a ait chatleri listele ok?
-    //!ilgili chate ait tum mesajları listeleme controller ını yaz
+  
     const result = await Chat.find({ users: req.user._id });
 
     res.status(200).send({

@@ -12,7 +12,6 @@ const { isLogin, isAdmin, isStaff } = require('../middlewares/permissions');
 // URL: /chats
 
 router.route('/').get(isLogin, chatlist)
-router.route('/messages/:chatId').get(isLogin, chatlist)
 router.route('/messages/:chatId').get(isLogin, messagelist)
 router.route('/messages').post(isLogin, messageChatCreate)
 router.route('/:id').delete(isLogin, deletee)

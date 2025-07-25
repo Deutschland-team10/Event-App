@@ -22,10 +22,7 @@ const MessageSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // eventId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref:"Event",  
-    // }
+    
 }, {
     collection: "messages",
     timestamps: true
