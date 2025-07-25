@@ -1,15 +1,14 @@
-"use strict"
+"use strict";
 /* -------------------------------------------------------
                 Event Project
 ------------------------------------------------------- */
 
-const Message = require('../models/message');
-const Chat= require("../models/chat")
+const Message = require("../models/message");
+const Chat = require("../models/chat");
 
 module.exports = {
-
-    chatlist: async (req, res) => {
-        /*
+  chatlist: async (req, res) => {
+    /*
             #swagger.tags = ["Messages"]
             #swagger.summary = "List Messages"
             #swagger.description = `
@@ -23,19 +22,39 @@ module.exports = {
             `
         */
 
-        //const result = await res.getModelList(message);
-        const result= await Chat.find()
+    //const result = await res.getModelList(message);
+  
+    const result = await Chat.find({ users: req.user._id });
 
-        res.status(200).send({
-            error: false,
-            
-            result
-        });
-    },
+    res.status(200).send({
+      error: false,
 
-    messageChatCreate: async (req, res) => {
+      result,
+    });
+  },
 
-        /*
+  messagelist: async (req, res) => {
+    /*
+        #swagger.tags = ["Messages"]
+        #swagger.summary = "List Messages of a Chat"
+        #swagger.description = `
+            Belirli bir chat'e ait tüm mesajları listeler.
+            <ul> Örnek:
+                <li>URL: /api/messages/:chatId</li>
+            </ul>
+        `
+    */
+
+    const result = await Message.find({ chatId: req.params.chatId });
+
+    res.status(200).send({
+      error: false,
+      result,
+    });
+  },
+
+  messageChatCreate: async (req, res) => {
+    /*
             #swagger.tags = ["Messages"]
             #swagger.summary = "Create message"
             #swagger.parameters['body'] = {
@@ -47,60 +66,61 @@ module.exports = {
             }
         */
 
-        // content senderId chatId veya reciverId
-        // eger ki chatid gönderilmisse bu chat zaten bulunmakta, yeni bir chat olusturma
-        // eger ki chatId yok ise yeni bir chat olustur
-        const { receiverId, content } = req.body;
-        if (!receiverId || !content) {
-            return res.status(400).send({
-                error: true,
-                message: "receiverId and content are required.",
-            });
-        }
-        const message = await Message.create({
-            senderId: req.user._id,
-            receiverId,
-            content,
-            isRead: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        });
-        res.status(201).send({
-            error: false,
-            message: "Message sent successfully",
-            result: message,
-        });
-    },
+    // content senderId chatId veya reciverId
+    // eger ki chatid gönderilmisse bu chat zaten bulunmakta, yeni bir chat olusturma
+    // eger ki chatId yok ise yeni bir chat olustur
+    const { receiverId, content, chatId } = req.body;
+    console.log(req.user._id, receiverId, content, chatId);
 
+    let chat = null;
 
-    read: async (req, res) => {
+    if (!chatId) {
+      chat = await Chat.create({
+        users: [req.user._id, receiverId],
+      });
+      console.log(chat);
+    }
 
-        /*
+    const message = await Message.create({
+      sender: req.user._id,
+      chatId: chat ? chat._id : chatId,
+      content,
+    });
+    res.status(201).send({
+      error: false,
+      message: "Message sent successfully",
+      result: message,
+    });
+  },
+
+  read: async (req, res) => {
+    /*
             #swagger.tags = ["Messages"]
             #swagger.summary = "Get Single message"
         */
 
-        const result = await message.findById(req.params.id);
+    const result = await Message.findById(req.params.id);
 
-        res.status(200).send({
-            error: false,
-            result
-        });
-    },
+    res.status(200).send({
+      error: false,
+      result,
+    });
+  },
 
-
-    deletee: async (req, res) => {
-        /*
+  deletee: async (req, res) => {
+    /*
             #swagger.tags = ["Messages"]
             #swagger.summary = "Delete message"
         */
 
-        const result = await message.deleteOne({ _id: req.params.id });
+    const result = await Chat.deleteOne({ _id: req.params.id });
 
-        res.status(result.deletedCount ? 204 : 404).send({
-            error: !result.deletedCount,
-            message: result.deletedCount ? 'Data deleted.' : 'Data is not found or already deleted.',
-            result
-        });
-    },
+    res.status(result.deletedCount ? 204 : 404).send({
+      error: !result.deletedCount,
+      message: result.deletedCount
+        ? "Data deleted."
+        : "Data is not found or already deleted.",
+      result,
+    });
+  },
 };

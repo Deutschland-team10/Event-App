@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/authSlice";
+import authReducer from "../features/chat/hooks/authSlice";
 import {
     persistStore, persistReducer, REHYDRATE, FLUSH,
     PAUSE,
@@ -8,7 +8,7 @@ import {
     REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
- import eventReducer from "../features/eventSlice";
+ import eventReducer from "../features/chat/hooks/eventSlice";
 
 const persistConfig = {
     key: 'root',

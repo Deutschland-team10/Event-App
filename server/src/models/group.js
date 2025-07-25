@@ -6,20 +6,20 @@ const { mongoose } = require("../configs/dbConnection")
 
 const GroupSchema = new mongoose.Schema({
 
-    creater: {
+  creater: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
 
-    members: [
+  members: [
         {
             type: String,
             required: true
         }
     ],
 
-   title:{
+  title:{
     type: String,
     trim:true,
     required:true

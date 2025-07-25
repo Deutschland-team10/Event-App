@@ -10,9 +10,11 @@ import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
 import CreateEvent from "../pages/CreateEvent";
+import ChatPage from "../pages/ChatPage";
 
 const AppRouter = () => {
-  const { currentUser } = useSelector((state) => state.auth);
+    const { currentUser } = useSelector((state) => state.auth);
+
 
   return (
     <Router>
@@ -32,6 +34,7 @@ const AppRouter = () => {
       </Routes>
     </Router>
   );
+
 };
 
 export default AppRouter;
