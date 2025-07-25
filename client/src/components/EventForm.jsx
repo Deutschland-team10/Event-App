@@ -29,14 +29,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import useEventCall from "../hook/useEventCall";
 import { useSelector } from "react-redux";
 
-
-
-
-
-
 const EventForm = ({ open, handleClose, initialState }) => {
-
-
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { postEventData, getEventData, updateEventData } = useEventCall();
@@ -44,17 +37,16 @@ const EventForm = ({ open, handleClose, initialState }) => {
   const [info, setInfo] = useState(initialState)
   console.log(categories);
 
-  useEffect(() => {
+   useEffect(() => {
     getEventData("categories");
   }, [])
 
-
   const handleChange = (e) => {
-
+    
     setInfo({ ...info, [e.target.name]: e.target.value })
   }
   const handleSubmit = (e) => {
-    e.preventDefault()
+    
     // Database info bilgisini gönderme işlemi 
     if (info._id) {
       updateEventData("events", info);
@@ -62,18 +54,12 @@ const EventForm = ({ open, handleClose, initialState }) => {
       console.log("EventForm - Gönderilen veri:", info);
        postEventData("events", info);
     }
-    //getEventData("events");
+    getEventData("events");
     // setSnackbarOpen(true);
     // setShouldRefetch(prev => !prev); // 📢 Sinyal gönder
      handleClose()
-
+    
   };
-
-
-
-
-
-
 
   const commonTextFieldStyles = {
     "& .MuiOutlinedInput-root": {
@@ -184,7 +170,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
 
           >
             <InputLabel
-              id="community-label"
+              id="categoryId-label"
               sx={{ color: "#555" }}
             >
               Topluluk
@@ -252,7 +238,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
               },
             }}
           >
-            Aktivität Form
+           {info._id && "Aktivität"}
           </Button>
         </Box>
 

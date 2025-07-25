@@ -18,14 +18,15 @@ const AppRouter = () => {
   return (
     <Router>
 
-      {currentUser && <Navbar />}
+      {/* {currentUser && <Navbar />} */}
 
       <Routes>
         <Route path="/" element={!currentUser && <StartPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route  element={<PrivateRouter />}>
-          <Route path="/home" element={<Dashboard />}>
+        <Route path="home" element={<PrivateRouter />}>
+          <Route path="" element={<Dashboard />}>
+            <Route index element={<Home />} />
             <Route path="create-event" element={<CreateEvent />} />
             <Route path="detail" element={<CardDetails />} />
             <Route path="profile" element={<Profile />} />

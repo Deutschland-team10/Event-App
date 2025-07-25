@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import useEventCall from '../../hook/useEventCall'
+import { useSelector } from 'react-redux';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -51,11 +52,11 @@ const communityColors = {
   social: '#4caf50',
 };
 
-export default function EventCard({ _id, title, description, date, community,address, creater, handleOpenForm, avatarGroup,setInitialState }) {
+export default function EventCard({ _id, title, description, date, address, creater,categoryId, image, handleOpenForm, avatarGroup,setInitialState }) {
   const [expanded, setExpanded] = React.useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   
-
+  const { currentUser } = useSelector((state) => state.auth);
   const { getDeleteData } = useEventCall();
 
   const handleExpandClick = (e) => {
@@ -63,28 +64,28 @@ export default function EventCard({ _id, title, description, date, community,add
     setExpanded(!expanded);
   };
 
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation();
-    setIsFavorited(!isFavorited);
-  };
-
-  const handleShareClick = (e) => {
-    e.stopPropagation();
-    if (navigator.share) {
-      navigator.share({
-        title,
-        text: description,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(`${title} - ${window.location.href}`);
-    }
-  };
-
-  // const handleCardClick = () => {
-  //   // navigate(`/details`, { state: { eventData: event } });
-  //   console.log('Card clicked:', event);
+  // const handleFavoriteClick = (e) => {
+  //   e.stopPropagation();
+  //   setIsFavorited(!isFavorited);
   // };
+
+  // const handleShareClick = (e) => {
+  //   e.stopPropagation();
+  //   if (navigator.share) {
+  //     navigator.share({
+  //       title,
+  //       text: description,
+  //       url: window.location.href,
+  //     });
+  //   } else {
+  //     navigator.clipboard.writeText(`${title} - ${window.location.href}`);
+  //   }
+  // };
+
+  const handleCardClick = () => {
+    // navigate(`/details`, { state: { eventData: event } });
+    console.log('Card clicked:', event);
+  };
 
   const formatDate = (dateValue) => {
     if (!dateValue) return "Tarih belirtilmedi";
@@ -104,12 +105,12 @@ export default function EventCard({ _id, title, description, date, community,add
     color: communityColors[val] || '#757575'
   });
 
-  const communityInfo = getCommunityInfo(community);
-  const eventImage = `https://source.unsplash.com/400x200/?event,${community || 'conference'}`;
+  const communityInfo = getCommunityInfo(categoryId);
+  // const eventImage = `https://source.unsplash.com/400x200/?event,${categoryId || 'conference'}`;
 
   return (
     <Card
-      //onClick={handleCardClick}
+      onClick={handleCardClick}
       sx={{
         maxWidth: 800,
         mx: "auto",
@@ -127,7 +128,8 @@ export default function EventCard({ _id, title, description, date, community,add
     >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500], fontWeight: 'bold' }}>
+          <Avatar src={currentUser.image || ""} 
+          sx={{ bgcolor: red[500], fontWeight: 'bold' }}>
             {creater ? creater : [0] }
           </Avatar>
         }
@@ -143,7 +145,7 @@ export default function EventCard({ _id, title, description, date, community,add
       <CardMedia
         component="img"
         height="200"
-        image={eventImage}
+        image={image}
         alt={`${title} görseli`}
         sx={{
           objectFit: 'cover',
@@ -206,9 +208,9 @@ export default function EventCard({ _id, title, description, date, community,add
       <CardActions disableSpacing>
         <IconButton 
           aria-label='add to favorites'
-          onClick={(e) => {
-            e.stopPropagation();
-            getDeleteData("event", _id);
+          onClick={() => {
+            //e.stopPropagation();
+            getDeleteData("events", _id);
           }}
         >
           <DeleteOutlineIcon 
@@ -220,23 +222,24 @@ export default function EventCard({ _id, title, description, date, community,add
         <IconButton 
           aria-label="edit" 
           onClick={(e) => {
-            e.stopPropagation();
-            if (handleOpen && setInitialState) {
-              handleOpen();
-              setInitialState({ _id, title, description, date, community, guestCount, address });
-            }
+           e.stopPropagation();
+            if (handleOpenForm && setInitialState) {
+              console.log("merhaba")
+              handleOpenForm("event");
+              setInitialState({ _id, title, description, date,location,image,categoryId });
+             }
           }}
         >
           <EditIcon sx={{ "&:hover": { color: "red" } }} />
         </IconButton>
-        <ExpandMore
+        {/* <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
         >
           <ExpandMoreIcon />
-        </ExpandMore>
+        </ExpandMore> */}
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>

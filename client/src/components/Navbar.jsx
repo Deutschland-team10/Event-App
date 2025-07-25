@@ -12,10 +12,12 @@ import {
   Menu,
   MenuItem,
   Button,
-  CssBaseline
+  CssBaseline,
+  Grid,
+
 } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import MailIcon from "@mui/icons-material/Mail";
@@ -23,9 +25,12 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
 import useAuthCall from "../hook/useAuthCall";
+import EventCard from "./Table/EventCard";
+
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [arama, setArama] = useState("");
   const navigate = useNavigate();
   const { logout } = useAuthCall();
 
@@ -47,7 +52,7 @@ function Navbar() {
   return (
     <>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: 1300 ,background: "linear-gradient(180deg, #667eea 0%, #764ba2 100%)",}}>
+      <AppBar position="fixed" sx={{ zIndex: 1300, background: "linear-gradient(180deg, #667eea 0%, #764ba2 100%)", }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6" noWrap component="div" onClick={() => navigate("/home")} sx={{ cursor: "pointer" }}>
             Event Logo
@@ -66,10 +71,26 @@ function Navbar() {
           >
             <SearchIcon />
             <InputBase
-              placeholder="Ara…"
-              sx={{ ml: 1, color: "white", flex: 1 }}
-              inputProps={{ "aria-label": "search" }}
+              placeholder="Search…"
+              inputProps={{ 'aria-label': 'search' }}
+              onChange={(e) => setArama(e.target.value)}
+              sx={{
+                ml: 1,
+                flex: 1,
+                color: 'white',
+              }}
             />
+          </Box>
+          <Box>
+            <Grid container spacing={3} sx={{ mt: 3 }}>
+              {Array.isArray(data) && data
+                .filter((d) => d.name.toLowerCase().includes(arama.toLowerCase()))
+                .map((player, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={player.id || index}>
+                    <EventCard {...player} />
+                  </Grid>
+                ))}
+            </Grid>
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -98,44 +119,44 @@ function Navbar() {
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
               <Button onClick={() => navigate("/home/profile")}
-               color="inherit"
-               sx={{
-               "&:hover": {
-                backgroundColor: "secondary.main",
-                color:"white",
-                "& .MuiSvgIcon-root":{
-                  color:"red"
-                 }
-                },
-               ".MuiSvgIcon-root":{
-               ml:1
-               }
+                color="inherit"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                    color: "white",
+                    "& .MuiSvgIcon-root": {
+                      color: "red"
+                    }
+                  },
+                  ".MuiSvgIcon-root": {
+                    ml: 1
+                  }
 
-               }}
+                }}
               >
-               PROFİLE
+                PROFİLE
               </Button>
               <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/account"); }}>
-               Hesap
+                Hesap
               </MenuItem>
               <Button
-               color="inherit"
-               onClick={()=> logout()}
-               sx={{
-               "&:hover": {
-                backgroundColor: "secondary.main",
-                color:"white",
-                "& .MuiSvgIcon-root":{
-                  color:"red"
-                 }
-                },
-               ".MuiSvgIcon-root":{
-               ml:1
-               }
+                color="inherit"
+                onClick={() => logout()}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                    color: "white",
+                    "& .MuiSvgIcon-root": {
+                      color: "red"
+                    }
+                  },
+                  ".MuiSvgIcon-root": {
+                    ml: 1
+                  }
 
-               }}
-               >
-               Logout <LogoutIcon/>
+                }}
+              >
+                Logout <LogoutIcon />
               </Button>
             </Menu>
 
