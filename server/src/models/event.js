@@ -32,6 +32,11 @@ const EventSchema = new mongoose.Schema({
         required: true
     },
 
+    chatId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Chat"
+    },
+
     title: {
         type: String,
         trim: true,
