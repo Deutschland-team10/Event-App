@@ -1,13 +1,16 @@
-import { Dialog, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from '@mui/material'
-import React, { useState } from 'react'
+import ListItem from '@mui/material/ListItem';
+import List from '@mui/material/List';
+
+import ListItemButton from '@mui/material/ListItemButton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ListItemText } from '@mui/material';
 
 
-const icon = (name) => `p`
 const links = [
   {
     title: "Dashobard",
-    url: "/home"
+    url: "/home",
+    //icons: <InboxIcon />
   },
   {
     title: "About",
@@ -23,35 +26,29 @@ const MenüListItem = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-
-
-
-
   return (
-    <div>
-      <List>
-        <Toolbar />
-        {links.map((item, index) => (
-          <ListItem key={item.title} disablePadding>
-            <ListItemButton
-              onClick={() => navigate(item.url)}
-              sx={{
-                backgroundColor: item.url === location.pathname ? 'rgba(255,255,255,0.1)' : 'transparent',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.2)'
-                }
-              }}
-            >
-              {/* <ListItemIcon sx={{ color: 'white' }}>
-            {index %2===0?<HomeIcon/>: <InfoIcon /> }
-          </ListItemIcon> */}
-              <ListItemText primary={item.title} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </div>
+    <List>
+      {links.map((item, index) => (
+        <ListItem key={item.title} disablePadding>
+          <ListItemButton
+            onClick={() => navigate(item.url)}
+            // sx={{
+            //   backgroundColor: item.url === location.pathname ? 'rgba(255,255,255,0.1)' 
+            //   : 'transparent',
+            //   color: 'white',
+            //   '&:hover': {
+            //     backgroundColor: 'rgba(255,255,255,0.2)'
+            //   }
+            // }}
+          >
+            {/* <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon> */}
+            <ListItemText primary={item.title} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
   )
 }
 

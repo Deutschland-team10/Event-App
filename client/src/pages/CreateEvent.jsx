@@ -21,7 +21,7 @@ const CreateEvent = () => {
         title: "",
         description: "",
         date: null,
-        categoryId: "",
+        categoryId: null,
         time: "12:30",
         image: "",
         location: ""
@@ -40,7 +40,7 @@ const CreateEvent = () => {
             title: "", 
             description: "", 
             date: null, 
-            categoryId: "", 
+            categoryId: null, 
             time: "", 
             image: "", 
             location: "" 

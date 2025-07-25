@@ -5,7 +5,6 @@ import Profile from "../pages/Profile";
 import ProfileForm from "../pages/ProfileEdit";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Navbar from "../components/Navbar";
 import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
@@ -16,27 +15,26 @@ import ChatPage from "../pages/ChatPage";
 const AppRouter = () => {
     const { currentUser } = useSelector((state) => state.auth);
 
-    return (
-        <Router>
 
-            {currentUser && <Navbar />}
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<StartPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="home" element={<PrivateRouter />}>
+          <Route path="" element={<Dashboard />}>
+            <Route index element={<Home />} />
+            <Route path="create-event" element={<CreateEvent />} />
+            <Route path="detail" element={<CardDetails />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="profile/edit" element={<ProfileForm />} />
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
+  );
 
-            <Routes>
-                <Route path="/" element={!currentUser && <StartPage />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <Route element={<PrivateRouter />}>
-                    <Route path="/home" element={<Dashboard />}>
-                        <Route path="create-event" element={<CreateEvent />} />
-                        <Route path="detail" element={<CardDetails />} />
-                        <Route path="profile" element={<Profile />} />
-                        <Route path="profile/edit" element={<ProfileForm />} />
-                        <Route path="chats" element={<ChatPage />} />
-                    </Route>
-                </Route>
-            </Routes>
-        </Router>
-    );
 };
 
 export default AppRouter;

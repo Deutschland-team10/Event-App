@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -20,95 +20,46 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EventIcon from "@mui/icons-material/Event";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PeopleIcon from "@mui/icons-material/People";
-import MapIcon from "@mui/icons-material/Map";
-
 
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import useEventCall from "../hook/useEventCall";
+import { useSelector } from "react-redux";
 
-// Leaflet icon düzeltmesi
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+const EventForm = ({ open, handleClose, initialState }) => {
 
-// ChangeView component: Harita üzerindeki görünümü güncellemek için kullanılır
-function ChangeView({ center }) {
-  const map = useMap();
-  React.useEffect(() => {
-    if (center && center.length === 2) {
-      map.setView(center, 13);
-    }
-  }, [center, map]);
-  return null;
-}
-
-const validationSchema = yup.object({
-  title: yup.string().required("Etkinlik başlığı zorunlu"),
-  description: yup.string().required("Açıklama zorunlu"),
-  date: yup.date().required("Tarih gerekli").nullable(),
-  community: yup.string().required("Topluluk seçimi zorunlu"),
-  guestCount: yup
-    .number()
-    .typeError("Sayı girilmeli")
-    .positive("Pozitif sayı olmalı")
-    .required("Katılımcı sayısı gerekli"),
-  address: yup.string().required("Adres gerekli"),
-});
-
-const GroupForm = ({onClose, onSubmit}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [position, setPosition] = useState([51.1657, 10.4515]); // Başlangıç pozisyonu
-  const [showMap, setShowMap] = useState(false);
-  const [coordinates, setCoordinates] = useState(null);
+  const { postEventData, getEventData, updateEventData } = useEventCall();
+  const { categories } = useSelector((state) => state.event);
+  const [info, setInfo] = useState(initialState)
+  console.log(categories);
 
-  const formik = useFormik({
-    initialValues: {
-      title: "",
-      description: "",
-      date: null,
-      community: "",
-      guestCount: "",
-      address: "",
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      setSnackbarOpen(true);
-      
-      // Koordinatları düzgün formatta gönder - bu çok önemli!
-      const eventData = {
-        ...values,
-        organizer: "Kullanıcı",
-        avatarGroup: [],
-        image: null,
-        id: Date.now()
-      };
-      
+   useEffect(() => {
+    getEventData("categories");
+  }, [])
+
+  const handleChange = (e) => {
     
-      
-      onSubmit(eventData);
-      formik.resetForm();
-      setShowMap(false);
-      setCoordinates(null);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-    },
-  });
-
-
-  const communityOptions = [
-    { value: "technology", label: "Teknoloji" },
-    { value: "art", label: "Sanat" },
-    { value: "music", label: "Müzik" },
-    { value: "sports", label: "Spor" },
-    { value: "social", label: "Sosyal Sorumluluk" },
-  ];
+    setInfo({ ...info, [e.target.name]: e.target.value })
+  }
+  const handleSubmit = (e) => {
+    
+    // Database info bilgisini gönderme işlemi 
+    if (info._id) {
+      updateEventData("events", info);
+    } else {
+      console.log("EventForm - Gönderilen veri:", info);
+       postEventData("events", info);
+    }
+    getEventData("events");
+    // setSnackbarOpen(true);
+    // setShouldRefetch(prev => !prev); // 📢 Sinyal gönder
+     handleClose()
+    
+  };
 
   const commonTextFieldStyles = {
     "& .MuiOutlinedInput-root": {
@@ -126,6 +77,8 @@ const GroupForm = ({onClose, onSubmit}) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Paper
+        open={open}
+        onClose={handleClose}
         elevation={2}
         sx={{
           p: 4,
@@ -135,21 +88,41 @@ const GroupForm = ({onClose, onSubmit}) => {
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 600, mb: 3, color: "#2c3e50", textAlign: "center" }}>
-          <EventIcon sx={{ mr: 1, color: "#1976d2" }} />
-          Etkinlik Detayları
-        </Typography>
+             {/* Image Upload */}
+        <Button variant="outlined" component="label" sx={{ mt: 2 }}>
+          Görsel Yükle
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            //onChange={handleImageChange}
+          />
+        </Button>
 
-        <Box component="form" onSubmit={formik.handleSubmit}>
+        {/* //{previewUrl &&  (*/}
+          <Box sx={{ mt: 2, textAlign: "center" }}>
+            <img
+              //src={previewUrl}
+              alt="Etkinlik görseli"
+              style={{
+                maxWidth: "100%",
+                maxHeight: 200,
+                borderRadius: 8,
+                objectFit: "cover",
+              }}
+            />
+          </Box>
+        
+
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
             fullWidth
             id="title"
             name="title"
             label="Etkinlik Başlığı"
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
+            value={info.title}
+            onChange={handleChange}
+
             margin="normal"
             sx={commonTextFieldStyles}
           />
@@ -161,12 +134,9 @@ const GroupForm = ({onClose, onSubmit}) => {
             label="Etkinlik Açıklaması"
             multiline
             rows={4}
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.description && Boolean(formik.errors.description)
-            }
-            helperText={formik.touched.description && formik.errors.description}
+            value={info.description}
+            onChange={handleChange}
+
             margin="normal"
             InputProps={{
               startAdornment: (
@@ -178,40 +148,40 @@ const GroupForm = ({onClose, onSubmit}) => {
             sx={commonTextFieldStyles}
           />
 
-          <DatePicker
+          <DatePicker name="date"
             label="Etkinlik Tarihi"
-            value={formik.values.date}
-            onChange={(value) => formik.setFieldValue("date", value)}
+            value={info.date}
+            onChange={(value) => setInfo({ ...info, "date": value })}
             renderInput={(params) => (
               <TextField
                 fullWidth
                 {...params}
                 margin="normal"
-                error={formik.touched.date && Boolean(formik.errors.date)}
-                helperText={formik.touched.date && formik.errors.date}
+
                 sx={commonTextFieldStyles}
               />
             )}
           />
 
+
           <FormControl
             fullWidth
             margin="normal"
-            error={formik.touched.community && Boolean(formik.errors.community)}
+
           >
             <InputLabel
-              id="community-label"
+              id="categoryId-label"
               sx={{ color: "#555" }}
             >
               Topluluk
             </InputLabel>
             <Select
-              labelId="community-label"
-              id="community"
-              name="community"
-              value={formik.values.community}
+              labelId="categoryId-label"
+              id="categoryId"
+              name="categoryId"
+              value={info.categoryId}
               label="Topluluk"
-              onChange={formik.handleChange}
+              onChange={handleChange}
               sx={{
                 ...commonTextFieldStyles,
                 "& .MuiSelect-icon": { color: "#1976d2" },
@@ -222,9 +192,9 @@ const GroupForm = ({onClose, onSubmit}) => {
                 </InputAdornment>
               }
             >
-              {communityOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {categories.map((option) => (
+                <MenuItem key={option._id} value={option._id}>
+                  {option.name}
                 </MenuItem>
               ))}
             </Select>
@@ -232,36 +202,12 @@ const GroupForm = ({onClose, onSubmit}) => {
 
           <TextField
             fullWidth
-            id="guestCount"
-            name="guestCount"
-            label="Katılımcı Sayısı"
-            type="number"
-            value={formik.values.guestCount}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.guestCount && Boolean(formik.errors.guestCount)
-            }
-            helperText={formik.touched.guestCount && formik.errors.guestCount}
-            margin="normal"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PeopleIcon sx={{ color: "#1976d2" }} />
-                </InputAdornment>
-              ),
-            }}
-            sx={commonTextFieldStyles}
-          />
-
-          <TextField
-            fullWidth
             id="address"
-            name="address"
-            label="Adres"
-            value={formik.values.address}
-            onChange={formik.handleChange}
-            error={formik.touched.address && Boolean(formik.errors.address)}
-            helperText={formik.touched.address && formik.errors.address}
+            name="location"
+            label="location"
+            value={info.location}
+            onChange={handleChange}
+
             margin="normal"
             InputProps={{
               startAdornment: (
@@ -272,11 +218,8 @@ const GroupForm = ({onClose, onSubmit}) => {
             }}
             sx={commonTextFieldStyles}
           />
-
-         
-          
-
           <Button
+
             color="primary"
             variant="contained"
             fullWidth
@@ -295,7 +238,7 @@ const GroupForm = ({onClose, onSubmit}) => {
               },
             }}
           >
-            Group Form
+           {info._id && "Submit"}
           </Button>
         </Box>
 
@@ -310,4 +253,4 @@ const GroupForm = ({onClose, onSubmit}) => {
   );
 };
 
-export default GroupForm;
+export default EventForm;
