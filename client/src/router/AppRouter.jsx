@@ -9,8 +9,11 @@ import Dashboard from "../pages/Dashboard";
 import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
+import About from "../pages/About";
 import CreateEvent from "../pages/CreateEvent";
 import ChatPage from "../pages/ChatPage";
+import MyEvents from "../pages/myEvents";
+
 
 const AppRouter = () => {
     const { currentUser } = useSelector((state) => state.auth);
@@ -28,6 +31,9 @@ const AppRouter = () => {
             <Route path="create-event" element={<CreateEvent />} />
             <Route path="detail" element={<CardDetails />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="my-events" element={<MyEvents />} />
+            <Route path="about" element={<About />} />
+            <Route path="chat-page" element={<ChatPage />} />
             <Route path="profile/edit" element={<ProfileForm />} />
           </Route>
         </Route>

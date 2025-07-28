@@ -4,14 +4,33 @@
 ------------------------------------------------------- */
 const express = require('express')
 const http= require("http")
-// const { Server } = require("socket.io");
-// const cors = require("cors")
+const { Server } = require("socket.io");
+const cors = require("cors")
 const app = express()
+app.use(cors())
 const server = http.createServer(app);
 
-// const io = new Server(server, {
-//   cors: corsOptions,
-// });
+const io = new Server(server, {
+    cors: {
+        origin: 'http://127.0.0.1:8000',
+        methods: ["GET", "POST", "PUT", "PATCH", "HEAD", "DELETE", "OPTIONS"]
+    }
+});
+
+io.on("connection", (socket) => {
+
+    console.log(`New client connected: ${socket.id}`);
+
+    socket.on("room", (data) => {
+        socket.join(data);  
+    });
+
+    socket.on('message', (data) => {
+        console.log(data,"dataaa");
+        socket.to(data.room).emit('messageReturn', data)
+
+    })
+});    
 
 // const corsOptions = {
 //   origin: CLIENT_URL,
@@ -96,7 +115,7 @@ app.use(require('./src/routes'));
 app.use(require('./src/middlewares/errorHandler'))
 
 // RUN SERVER:
-app.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`))
+server.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`))
 
 /* ------------------------------------------------------- */
 // Syncronization (must be in commentLine):

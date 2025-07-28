@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Paper, Avatar, Divider } from "@mui/material";
 import { getMessages, onNewMessage } from "../services/chatService";
 
-const ChatScreen = ({ chat }) => {
+const ChatScreen = ({ chat,socket }) => {
     const [messages, setMessages] = useState([]);
+    const [MessageList,setMessageList] = useState([]);
 
     useEffect(() => {
+        socket.on("messageReturn", (data)=>{
+            setMessageList((prev) => [...prev, data]);
+        }) 
+
         getMessages(chat.id).then((msgs) => setMessages(msgs));
         const unsubscribe = onNewMessage(chat.id, (newMsg) => {
             setMessages((prev) => [...prev, newMsg]);
@@ -27,7 +32,7 @@ const ChatScreen = ({ chat }) => {
                         p: 2,
                         mb: 2,
                         maxWidth: "70%",
-                        alignSelf: msg.sender === "currentUser" ? "flex-end" : "flex-start",
+                        alignSelf: msg.sender === sender ? "flex-end"  : "flex-start",
                     }}
                 >
                     <Box display="flex" alignItems="center" gap={1} mb={1}>

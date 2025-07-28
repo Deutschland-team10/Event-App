@@ -99,7 +99,7 @@ const useAuthCall = () => {
         signInWithPopup(auth, googleProvider)
             .then((result) => {
                 sessionStorage.setItem("userInfo", "true")
-                navigate("/")
+                navigate("/home")
             })
             .catch((error) => {
                 console.log(error);

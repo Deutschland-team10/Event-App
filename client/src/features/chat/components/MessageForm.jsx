@@ -3,17 +3,21 @@ import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { sendMessage } from "../services/chatService";
 
-const MessageForm = ({ chatId }) => {
+const MessageForm = ({ chatId ,socket}) => {
     const [message, setMessage] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         if (!message.trim()) return;
+
         sendMessage(chatId, {
-            text: message,
-            sender: "currentUser",
-            timestamp: new Date().toISOString(),
+            content: content,
+            sender: sender,
+            romm: room,
+            date: (new Date(Date.now)).getHours() + ":" + (new Date(Date.now)).getMinutes() 
         });
+        socket.emit('message', sendMessage)
         setMessage("");
     };
 
