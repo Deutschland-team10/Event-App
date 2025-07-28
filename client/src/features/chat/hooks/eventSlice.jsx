@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import event from "../../../../../server/src/models/event";
 
 const eventSlice = createSlice({
     name: "event",
@@ -9,7 +8,6 @@ const eventSlice = createSlice({
         events: [],
         groups: [],
         chats: [],
-        eventDetails: {},
         categories: [],
     },
     reducers: {
