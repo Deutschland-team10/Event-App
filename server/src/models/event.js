@@ -14,6 +14,8 @@ const EventSchema = new mongoose.Schema({
 
     participants: [
         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             type: String,
            //required: true {event katilimcilar olmadan da olusturulabilir}
         }
