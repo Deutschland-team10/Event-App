@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   Card,
@@ -60,6 +60,7 @@ const communityColors = {
 };
 
 export default function CardDetails() {
+  const {id:eventId}= useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);

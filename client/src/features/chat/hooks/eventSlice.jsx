@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import event from "../../../../../server/src/models/event";
 
 const eventSlice = createSlice({
     name: "event",
@@ -8,6 +9,7 @@ const eventSlice = createSlice({
         events: [],
         groups: [],
         chats: [],
+        eventDetails: {},
         categories: [],
     },
     reducers: {
@@ -34,6 +36,10 @@ const eventSlice = createSlice({
             state.loading = false;
             state.messages = payload
         },
+        getEvetDetailsSuccess: (state, { payload }) => {
+            state.loading = false;
+            state.eventDetails = payload
+        },
     },
 });
 export const {
@@ -42,5 +48,6 @@ export const {
     eventSuccess,
     getEventCategoryGroupSuccess,
     getMessageSuccess,
+    getEvetDetailsSuccess
 } = eventSlice.actions;
 export default eventSlice.reducer;

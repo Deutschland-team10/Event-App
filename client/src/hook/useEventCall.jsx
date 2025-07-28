@@ -78,6 +78,23 @@ const useEventCall = () => {
             dispatch(fetchFail());
         }
     };
+
+    /* -------------------------------------------------------------------------- */
+    /*                               GET EVENT DETAİLS                            */
+    /* -------------------------------------------------------------------------- */
+    const getEventDetails = async (url, info) => {
+        dispatch(fetchStart());
+        try {
+            const { data } = await axiosWithToken.get(`${url}/${info._id}`, info);
+            getEvetDetailsSuccess(data);
+            
+        } catch (error) {
+            dispatch(fetchFail());
+        }
+    };
+
+
+
     const getMessage = async (url) => {
         dispatch(fetchStart());
         try {
@@ -112,7 +129,8 @@ const useEventCall = () => {
         postEventData,
         updateEventData,
         getMessage,
-        getEventCategoryGroup
+        getEventCategoryGroup,
+        getEventDetails
     };
 };
 export default useEventCall;
