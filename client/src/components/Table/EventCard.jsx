@@ -112,9 +112,9 @@ export default function EventCard({ _id, title, description, date, address, crea
     <Card
       onClick={handleCardClick}
       sx={{
-        maxWidth: 800,
+        maxwidth: 345,
         mx: "auto",
-        my: { xs: 4, md: 6 },
+        my: { xs: 4, md: 4 },
         px: { xs: 2, md: 4 },
         borderRadius: 3,
         cursor: "pointer",
