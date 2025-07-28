@@ -92,7 +92,22 @@ const Dashboard = () => {
               >
                 PROFİLE
               </Button>
-              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/my-events"); }}>
+              <MenuItem 
+               sx={{
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                    color: "white",
+                    "& .MuiSvgIcon-root": {
+                      color: "red"
+                    }
+                  },
+                  color: "inherit",
+                  ".MuiSvgIcon-root": {
+                    ml: 1
+                  }
+
+                }}
+               onClick={() => { handleCloseUserMenu(); navigate("/home/my-events"); }}>
                 My Events
               </MenuItem>
               <Button
