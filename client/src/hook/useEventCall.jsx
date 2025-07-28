@@ -20,10 +20,16 @@ const useEventCall = () => {
     /* -------------------------------------------------------------------------- */
     /*                               GET EVENT DATA                               */
     /* -------------------------------------------------------------------------- */
-    const getEventData = async (url) => {
+    const getEventData = async (url, creater ) => {
+        let finallUrl 
+        if (creater) {
+            finallUrl = `${url}?filter[creater]=${creater}`;
+        } else {
+            finallUrl = `${url}`;
+        }
         dispatch(fetchStart());
         try {
-            const { data } = await axiosWithToken.get(`${url}`);
+            const { data } = await axiosWithToken.get(finallUrl);
             console.log(data);
             dispatch(eventSuccess({ data, url }));
         } catch (error) {

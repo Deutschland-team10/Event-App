@@ -22,7 +22,7 @@ module.exports = {
                     </ul>`
         */
 
-        const result = await res.getModelList(Event);
+        const result = await res.getModelList(Event, {} ,["creater"]);
 
         res.status(200).send({
             error: false,

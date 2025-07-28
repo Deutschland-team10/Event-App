@@ -92,8 +92,8 @@ const Dashboard = () => {
               >
                 PROFİLE
               </Button>
-              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/account"); }}>
-                Hesap
+              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/my-events"); }}>
+                My Events
               </MenuItem>
               <Button
                 color="inherit"

@@ -9,6 +9,9 @@ import {
 } from "@mui/material";
 import ChatScreen from "./ChatScreen";
 import MessageForm from "./MessageForm";
+import io from "socket.io-client";
+
+const socket = io.connect(import.meta.env.VITE_BASE_URL)
 
 const ChatUI = () => {
     const [activeChat, setActiveChat] = useState(null);
@@ -47,8 +50,8 @@ const ChatUI = () => {
             <Box flex={1} display="flex" flexDirection="column">
                 {activeChat ? (
                     <>
-                        <ChatScreen chat={activeChat} />
-                        <MessageForm chatId={activeChat.id} />
+                        <ChatScreen chat={activeChat} socket={socket}/>
+                        <MessageForm chatId={activeChat.id} socket={socket}/>
                     </>
                 ) : (
                     <Box display="flex" justifyContent="center" alignItems="center" flex={1}>

@@ -128,9 +128,9 @@ export default function EventCard({ _id, title, description, date, address, crea
     >
       <CardHeader
         avatar={
-          <Avatar src={currentUser.image || ""} 
+          <Avatar src={creater.image || ""} 
           sx={{ bgcolor: red[500], fontWeight: 'bold' }}>
-            {creater ? creater : [0] }
+            
           </Avatar>
         }
         action={
@@ -139,7 +139,7 @@ export default function EventCard({ _id, title, description, date, address, crea
           </IconButton>
         }
         title={<Typography variant="h6" fontWeight="bold">{title}</Typography>}
-        subheader={`Organizatör: ${creater}`}
+        subheader={`Organizatör: ${creater.firstName}`}
       />
 
       <CardMedia
