@@ -6,6 +6,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useSelector } from "react-redux";
 import EventCard from "../components/Table/EventCard";
 import useEventCall from "../hook/useEventCall";
+import SearhBar from "../components/SearhBar";
 
 const Home = () => {
  const { getEventData } = useEventCall();
@@ -16,8 +17,9 @@ const Home = () => {
     }, []);
 
     return (
+        
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            
+            <SearhBar/>
 
             {/* Etkinlik Kartları */}
             <Grid container spacing={3} sx={{ mt: 3 }}>
