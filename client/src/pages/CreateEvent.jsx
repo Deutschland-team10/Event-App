@@ -20,8 +20,9 @@ const CreateEvent = () => {
         _id: null,
         title: "",
         description: "",
+        participants: [],
         date: null,
-        categoryId: null,
+        categoryId: "",
         time: "12:30",
         image: "",
         location: ""
@@ -39,8 +40,9 @@ const CreateEvent = () => {
             _id: null,
             title: "", 
             description: "", 
+            participants: [],
             date: null, 
-            categoryId: null, 
+            categoryId: "", 
             time: "", 
             image: "", 
             location: "" 
