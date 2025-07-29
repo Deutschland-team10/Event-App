@@ -68,8 +68,9 @@ export default function EventCard({
   _id,
   title,
   description,
+  participants,
   date,
-  address,
+  location,
   creater,
   categoryId,
   image,
@@ -136,13 +137,15 @@ export default function EventCard({
 
   return (
     <Card
-      onClick={handleCardClick}
+      onDoubleClick={handleCardClick}
       sx={{
         maxwidth: 345,
+        height: 600,
         mx: "auto",
         my: { xs: 4, md: 4 },
         px: { xs: 2, md: 4 },
         borderRadius: 3,
+        position: "relative",
         cursor: "pointer",
         boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         transition: "all 0.3s ease",
@@ -156,8 +159,9 @@ export default function EventCard({
         avatar={
           <Avatar
             src={creater.image || ""}
+            alt={`${creater.firstName} ${creater.lastName}`}
             sx={{ bgcolor: red[500], fontWeight: "bold" }}
-          ></Avatar>
+          />
         }
         action={
           <IconButton aria-label="ayarlar" onClick={(e) => e.stopPropagation()}>
@@ -195,7 +199,7 @@ export default function EventCard({
         <Box sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}>
           <LocationOnIcon sx={{ mr: 1, mt: 0.2, color: "primary.main" }} />
           <Typography variant="body2" color="text.secondary">
-            {address}
+            {location}
           </Typography>
         </Box>
 
@@ -209,16 +213,7 @@ export default function EventCard({
             : description}
         </Typography>
 
-        <Chip
-          label={communityInfo.label}
-          size="small"
-          sx={{
-            backgroundColor: communityInfo.color,
-            color: "white",
-            fontWeight: "bold",
-            mb: 2,
-          }}
-        />
+        {categoryId}
 
         {Array.isArray(avatarGroup) && avatarGroup.length > 0 && (
           <Box sx={{ mt: 2 }}>
@@ -252,18 +247,27 @@ export default function EventCard({
         )}*/}
       </CardContent>
 
-      <CardActions disableSpacing>
+      <CardActions
+        disableSpacing
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+          position: "absolute",
+          bottom: 0,
+        }}
+      >
         <IconButton
           aria-label="add to favorites"
-          onClick={() => {
-            //e.stopPropagation();
-            getDeleteData("events", _id);
-          }}
+          
         >
           <DeleteOutlineIcon
             sx={{
               "&:hover": { color: "red" },
             }}
+            onClick={() => {  
+              
+            getDeleteData("events",_id);}}
           />
         </IconButton>
         <IconButton

@@ -17,7 +17,7 @@ const MessageForm = ({ chatId ,socket}) => {
             romm: room,
             date: (new Date(Date.now)).getHours() + ":" + (new Date(Date.now)).getMinutes() 
         });
-        socket.emit('message', sendMessage)
+        // socket.emit('message', sendMessage)
         setMessage("");
     };
 
