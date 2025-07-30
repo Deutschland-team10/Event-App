@@ -34,6 +34,7 @@ import {
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import useEventCall from '../hook/useEventCall';
 
 // Leaflet icon düzeltmesi
 delete L.Icon.Default.prototype._getIconUrl;
@@ -60,15 +61,20 @@ const communityColors = {
 };
 
 export default function CardDetails() {
-  const {id:eventId}= useParams();
+  //const {id:eventId}= useParams();
+  const { _id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // EventCard'dan gelen event verisi
-  const event = location.state?.event;
 
+  //const event = location.state?.event;
+
+  const { getEventDetails } = useEventCall();
+   console.log(_id);
+   console.log(event);
   useEffect(() => {
     // Sayfa yüklendiğinde loading'i kapat
     const timer = setTimeout(() => {
@@ -78,6 +84,10 @@ export default function CardDetails() {
     return () => clearTimeout(timer);
   }, []);
 
+    useEffect(() => {
+          getEventDetails(_id);
+      }, []);
+ 
   // Eğer event verisi yoksa ana sayfaya yönlendir
   if (!event) {
     return (
@@ -143,7 +153,7 @@ export default function CardDetails() {
     [Number(coordinates.lat), Number(coordinates.lng)] :
     [51.1657, 10.4515];
 
-  const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
+  //const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
 
   const handleFavoriteClick = () => {
     setIsFavorited(!isFavorited);
@@ -199,7 +209,7 @@ export default function CardDetails() {
             <CardMedia
               component="img"
               height="400"
-              image={eventImage}
+              image={image}
               alt={`${title} görseli`}
               sx={{ objectFit: 'cover' }}
             />
