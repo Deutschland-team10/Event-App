@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Grid } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -29,7 +28,12 @@ const MyEvents = () => {
                             
                         />
                     </Grid>
-                )): <p>Herhangi bir event olusturmadınız</p>}
+                )): <p
+                     style={{
+                        textAlign: "center", width: "100%", marginTop: "30px", fontSize: "48px", color: "red"
+                    }}>
+                    Sie haben noch kein Event erstellt !!!
+                    </p>}
             </Grid>
         </LocalizationProvider>
     );
