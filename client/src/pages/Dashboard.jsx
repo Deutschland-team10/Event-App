@@ -43,7 +43,7 @@ const Dashboard = () => {
       <AppBar position="fixed" sx={{ zIndex: 1300, background: "linear-gradient(180deg, #667eea 0%, #764ba2 100%)", }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6" noWrap component="div" onClick={() => navigate("/home")} sx={{ cursor: "pointer" }}>
-            Event Logo
+            Event App
           </Typography>
 
 
@@ -52,7 +52,7 @@ const Dashboard = () => {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="error">
-                <MailIcon />
+                <MailIcon onClick={() => navigate("/home/chat-page")} />
               </Badge>
             </IconButton>
             <IconButton color="inherit">
@@ -74,6 +74,8 @@ const Dashboard = () => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
+
+              <MenuItem>
               <Button onClick={() => navigate("/home/profile")}
                 color="inherit"
                 sx={{
@@ -93,6 +95,8 @@ const Dashboard = () => {
               >
                 PROFİLE
               </Button>
+              </MenuItem>
+
               <MenuItem 
                >
                <Button
@@ -115,6 +119,8 @@ const Dashboard = () => {
                 My Events
                </Button>
               </MenuItem>
+
+              <MenuItem>
               <Button
                 color="inherit"
                 onClick={() => logout()}
@@ -134,6 +140,7 @@ const Dashboard = () => {
               >
                 Logout <LogoutIcon />
               </Button>
+              </MenuItem>
             </Menu>
 
           </Box>
