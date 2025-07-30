@@ -86,14 +86,34 @@ const Dashboard = () => {
                   },
                   ".MuiSvgIcon-root": {
                     ml: 1
-                  }
+                  },
+                  textAlign: "center",
 
                 }}
               >
                 PROFİLE
               </Button>
-              <MenuItem onClick={() => { handleCloseUserMenu(); navigate("/home/my-events"); }}>
+              <MenuItem 
+               >
+               <Button
+               sx={{
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                    color: "white",
+                    "& .MuiSvgIcon-root": {
+                      color: "red"
+                    }
+                  },
+                  color: "inherit",
+                  ".MuiSvgIcon-root": {
+                    ml: 1
+                  },
+                  
+
+                }}
+               onClick={() => { handleCloseUserMenu(); navigate("/home/my-events"); }}>
                 My Events
+               </Button>
               </MenuItem>
               <Button
                 color="inherit"

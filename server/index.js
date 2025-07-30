@@ -12,14 +12,14 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://127.0.0.1:8000',
+        origin: 'http://localhost:5173',
         methods: ["GET", "POST", "PUT", "PATCH", "HEAD", "DELETE", "OPTIONS"]
     }
 });
 
 io.on("connection", (socket) => {
 
-    console.log(`New client connected: ${socket.id}`);
+    // console.log(`New client connected: ${socket.id}`);
 
     socket.on("room", (data) => {
         socket.join(data);  

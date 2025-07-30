@@ -34,6 +34,10 @@ const eventSlice = createSlice({
             state.loading = false;
             state.messages = payload
         },
+        getEvetDetailsSuccess: (state, { payload }) => {
+            state.loading = false;
+            state.eventDetails = payload
+        },
     },
 });
 export const {
@@ -42,5 +46,6 @@ export const {
     eventSuccess,
     getEventCategoryGroupSuccess,
     getMessageSuccess,
+    getEvetDetailsSuccess
 } = eventSlice.actions;
 export default eventSlice.reducer;

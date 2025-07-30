@@ -17,9 +17,9 @@ router.route('/')
 
 router.route('/:id')
     .get(isLogin, read)
-    .put(isOwnEvent, upload.single('image'), update) // Upload middleware eklendi
-    .patch(isOwnEvent, upload.single('image'), update) // Upload middleware eklendi
-    .delete(isOwnEvent, deletee);
+    .put(isLogin, upload.single('image'), update) // Upload middleware eklendi
+    .patch(isLogin, upload.single('image'), update) // Upload middleware eklendi
+    .delete(isLogin, deletee);
 
 /* ------------------------------------------------------- */
 module.exports = router;

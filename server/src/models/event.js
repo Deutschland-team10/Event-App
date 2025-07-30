@@ -12,6 +12,7 @@ const EventSchema = new mongoose.Schema({
         required: true,
     },
 
+
     participants: [
         {
             type: mongoose.Schema.Types.ObjectId,
