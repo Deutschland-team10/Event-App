@@ -33,7 +33,6 @@ const ExpandMore = styled((props) => {
   transition: theme.transitions.create('transform', {
     duration: theme.transitions.duration.shortest,
   }),
-  
 }));
 
 const communityLabels = {
@@ -52,9 +51,10 @@ const communityColors = {
   social: '#4caf50',
 };
 
-export default function EventCard({ _id, title, description, date, address, creater,categoryId, image, handleOpenForm, avatarGroup,setInitialState }) {
+export default function EventCard({ _id, title, description, date, creater,categoryId,location, image, handleOpenForm, avatarGroup,setInitialState }) {
   const [expanded, setExpanded] = React.useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const navigate = useNavigate();
   
   const { currentUser } = useSelector((state) => state.auth);
   const { getDeleteData } = useEventCall();
@@ -64,27 +64,9 @@ export default function EventCard({ _id, title, description, date, address, crea
     setExpanded(!expanded);
   };
 
-  // const handleFavoriteClick = (e) => {
-  //   e.stopPropagation();
-  //   setIsFavorited(!isFavorited);
-  // };
-
-  // const handleShareClick = (e) => {
-  //   e.stopPropagation();
-  //   if (navigator.share) {
-  //     navigator.share({
-  //       title,
-  //       text: description,
-  //       url: window.location.href,
-  //     });
-  //   } else {
-  //     navigator.clipboard.writeText(`${title} - ${window.location.href}`);
-  //   }
-  // };
-
-  const handleCardClick = () => {
-    // navigate(`/details`, { state: { eventData: event } });
-    console.log('Card clicked:', event);
+   const handleCardClick = () => {
+    // Event details sayfasına yönlendir
+    navigate(`event/${_id}`);
   };
 
   const formatDate = (dateValue) => {
@@ -92,6 +74,7 @@ export default function EventCard({ _id, title, description, date, address, crea
     const dateObj = new Date(dateValue);
     if (isNaN(dateObj.getTime())) return "Geçersiz tarih";
     return dateObj.toLocaleDateString('tr-TR', {
+
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -162,7 +145,7 @@ export default function EventCard({ _id, title, description, date, address, crea
 
         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
           <LocationOnIcon sx={{ mr: 1, mt: 0.2, color: 'primary.main' }} />
-          <Typography variant="body2" color="text.secondary">{address}</Typography>
+          <Typography variant="body2" color="text.secondary">{location}</Typography>
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.5 }}>
@@ -224,7 +207,6 @@ export default function EventCard({ _id, title, description, date, address, crea
           onClick={(e) => {
            e.stopPropagation();
             if (handleOpenForm && setInitialState) {
-              console.log("merhaba")
               handleOpenForm("event");
               setInitialState({ _id, title, description, date,location,image,categoryId });
              }

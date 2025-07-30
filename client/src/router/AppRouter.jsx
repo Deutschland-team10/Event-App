@@ -29,7 +29,7 @@ const AppRouter = () => {
           <Route path="" element={<Dashboard />}>
             <Route index element={<Home />} />
             <Route path="create-event" element={<CreateEvent />} />
-            <Route path="detail" element={<CardDetails />} />
+            <Route path="event/:id" element={<CardDetails />} />
             <Route path="profile" element={<Profile />} />
             <Route path="my-events" element={<MyEvents />} />
             <Route path="about" element={<About />} />

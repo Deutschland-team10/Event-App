@@ -17,9 +17,12 @@ const useEventCall = () => {
     const { token } = useSelector((state) => state.auth);
     const BASE_URL = import.meta.env.VITE_BASE_URL;
     const { axiosWithToken } = useAxios();
+
+    
     /* -------------------------------------------------------------------------- */
     /*                               GET EVENT DATA                               */
     /* -------------------------------------------------------------------------- */
+
     const getEventData = async (url, creater ) => {
         let finallUrl 
         if (creater) {
