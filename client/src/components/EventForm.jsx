@@ -63,6 +63,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        postEventData("events", info);
 
         const formData = new FormData();
         formData.append('image', selectedFile);

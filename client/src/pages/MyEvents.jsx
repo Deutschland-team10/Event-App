@@ -24,7 +24,7 @@ const MyEvents = () => {
                 {events.length>0 ? events.map((event, index) => (
                     <Grid item xs={12} sm={6} md={4} key={event.id || index}>
                         <EventCard  
-                            {...event} 
+                            event={event}  
                             
                         />
                     </Grid>

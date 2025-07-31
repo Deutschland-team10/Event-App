@@ -12,7 +12,7 @@ import useEventCall from "../hook/useEventCall";
 const CreateEvent = () => {
     const { getEventData } = useEventCall();
     const { events} = useSelector((state) => state.event );
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     
     const [formType, setFormType] = useState("event");
     
@@ -120,7 +120,7 @@ const CreateEvent = () => {
                 {events.map((event, index) => (
                     <Grid item xs={12} sm={6} md={4} key={event.id || index}>
                         <EventCard  
-                            {...event} 
+                            event={event} 
                              handleOpenForm={handleOpenForm}
                              setInitialState={setInitialState}
                         />
