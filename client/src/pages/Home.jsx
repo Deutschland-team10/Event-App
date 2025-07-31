@@ -47,7 +47,6 @@ const Home = () => {
     };
 
 
-
   const normalize = (str) =>
     (str || "").toLocaleLowerCase("tr-TR").replace(/\s+/g, " ").trim();
 
