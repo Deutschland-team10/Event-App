@@ -8,6 +8,7 @@ import useEventCall from "../hook/useEventCall";
 import SearchBar from "../components/SearchBar";
 
 const Home = () => {
+
   const { getEventData } = useEventCall();
   const { events } = useSelector((state) => state.event);
   const [search, setSearch] = useState("");
@@ -56,3 +57,4 @@ const Home = () => {
 };
 
 export default Home;
+
