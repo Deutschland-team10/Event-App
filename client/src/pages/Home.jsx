@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import EventCard from "../components/Table/EventCard";
 import useEventCall from "../hook/useEventCall";
 import SearchBar from "../components/SearchBar";
+
 const Home = () => {
     const { getEventData } = useEventCall();
     const { events, categories } = useSelector((state) => state.event);

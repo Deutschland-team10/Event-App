@@ -17,7 +17,13 @@ import {
 import { red } from "@mui/material/colors";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import BrushIcon from "@mui/icons-material/Brush";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import CelebrationIcon from "@mui/icons-material/Celebration";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import ComputerIcon from "@mui/icons-material/Computer";
+import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EventIcon from "@mui/icons-material/Event";
@@ -37,33 +43,6 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: expand ? "rotate(180deg)" : "rotate(0deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
-
-const communityLabels = {
-  technology: "Teknoloji",
-  art: "Sanat",
-  music: "Müzik",
-  sports: "Spor",
-  social: "Sosyal Sorumluluk",
-};
-
-const communityColors = {
-  technology: "#2196f3",
-  art: "#e91e63",
-  music: "#9c27b0",
-  sports: "#ff9800",
-  social: "#4caf50",
-};
-
 export default function EventCard({
   _id,
   title,
@@ -82,9 +61,48 @@ export default function EventCard({
   const [isFavorited, setIsFavorited] = useState(false);
 
   const navigate = useNavigate();
-
-  const { currentUser } = useSelector((state) => state.auth);
   const { getDeleteData } = useEventCall();
+
+  // Tek fonksiyon: ikon + renk
+  const getCategoryStyle = (name) => {
+    switch (name) {
+      case "Sport":
+        return {
+          icon: <SportsSoccerIcon fontSize="small" />,
+          color: "#2196f3", // mavi
+        };
+      case "Kunst":
+        return {
+          icon: <BrushIcon fontSize="small" />,
+          color: "#9c27b0", // mor
+        };
+      case "Musik":
+        return {
+          icon: <MusicNoteIcon fontSize="small" />,
+          color: "#e91e63", // pembe
+        };
+      case "Fest":
+        return {
+          icon: <CelebrationIcon fontSize="small" />,
+          color: "#ff9800", // turuncu
+        };
+      case "Soziale Verantwortung":
+        return {
+          icon: <VolunteerActivismIcon fontSize="small" />,
+          color: "#f44336", // kırmızı
+        };
+      case "Technologie":
+        return {
+          icon: <ComputerIcon fontSize="small" />,
+          color: "#4caf50", // yeşil
+        };
+      default:
+        return {
+          icon: <LabelOutlinedIcon fontSize="small" />,
+          color: "#9e9e9e", // gri
+        };
+    }
+  };
 
   const handleExpandClick = (e) => {
     e.stopPropagation();
@@ -97,10 +115,10 @@ export default function EventCard({
   };
 
   const formatDate = (dateValue) => {
-    if (!dateValue) return "Tarih belirtilmedi";
+    if (!dateValue) return "Datum nicht angegeben";
     const dateObj = new Date(dateValue);
-    if (isNaN(dateObj.getTime())) return "Geçersiz tarih";
-    return dateObj.toLocaleDateString("tr-TR", {
+    if (isNaN(dateObj.getTime())) return "Ungultiges Datum";
+    return dateObj.toLocaleDateString("de-DE", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -108,14 +126,6 @@ export default function EventCard({
       minute: "2-digit",
     });
   };
-
-  const getCommunityInfo = (val) => ({
-    label: communityLabels[val] || val || "Belirtilmedi",
-    color: communityColors[val] || "#757575",
-  });
-
-  const communityInfo = getCommunityInfo(categoryId);
-  // const eventImage = `https://source.unsplash.com/400x200/?event,${categoryId || 'conference'}`;
 
   return (
     <Card
@@ -161,7 +171,7 @@ export default function EventCard({
       <CardMedia
         component="img"
         height="200"
-        image={image}
+        image={image || "/default-image.jpg"}
         alt={`${title} görseli`}
         sx={{
           objectFit: "cover",
@@ -195,7 +205,33 @@ export default function EventCard({
             : description}
         </Typography>
 
-        {categoryId}
+        {/* Kategori Chip */}
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+          {(() => {
+            const { icon, color } = getCategoryStyle(categoryId.name);
+            return (
+              <Chip
+                icon={icon}
+                label={categoryId.name}
+                sx={{
+                  backgroundColor: color,
+                  color: "white",
+                  fontWeight: "bold",
+                  px: 1.2,
+                  borderRadius: 2,
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: color,
+                    filter: "brightness(1.15)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                    transform: "scale(1.05)",
+                  },
+                }}
+              />
+            );
+          })()}
+        </Box>
 
         {Array.isArray(avatarGroup) && avatarGroup.length > 0 && (
           <Box sx={{ mt: 2 }}>
@@ -203,7 +239,7 @@ export default function EventCard({
               variant="subtitle2"
               sx={{ mb: 1, color: "text.secondary" }}
             >
-              Katılanlar ({avatarGroup.length}):
+              {`${participants.length} Katılımcı:`}
             </Typography>
             <AvatarGroup max={6}>
               {avatarGroup.map((p, i) => (
@@ -239,17 +275,14 @@ export default function EventCard({
           bottom: 0,
         }}
       >
-        <IconButton
-          aria-label="add to favorites"
-          
-        >
+        <IconButton aria-label="add to favorites">
           <DeleteOutlineIcon
             sx={{
               "&:hover": { color: "red" },
             }}
-            onClick={() => {  
-              
-            getDeleteData("events",_id);}}
+            onClick={() => {
+              getDeleteData("events", _id);
+            }}
           />
         </IconButton>
         <IconButton
