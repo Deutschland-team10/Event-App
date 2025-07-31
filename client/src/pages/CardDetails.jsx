@@ -35,6 +35,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import useEventCall from '../hook/useEventCall';
+import { useSelector } from 'react-redux';
 
 // Leaflet icon düzeltmesi
 delete L.Icon.Default.prototype._getIconUrl;
@@ -63,16 +64,15 @@ const communityColors = {
 export default function CardDetails() {
   //const {id:eventId}= useParams();
   const { _id } = useParams();
-  const location = useLocation();
+   const { getEventData } = useEventCall();
+    const { events} = useSelector((state) => state.event );
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // EventCard'dan gelen event verisi
+  //const event = useSelector((state) => state.event.eventDetails);
+  const eventDetail = events.find(a => a._id === _id);
 
-  //const event = location.state?.event;
-
-  const { getEventDetails } = useEventCall();
    console.log(_id);
    console.log(event);
   useEffect(() => {
@@ -84,12 +84,16 @@ export default function CardDetails() {
     return () => clearTimeout(timer);
   }, []);
 
-    useEffect(() => {
-          getEventDetails(_id);
-      }, []);
- 
+       useEffect(() => {
+    getEventData("events");
+    // eventDetail geldiğinde loading'i kapat
+    if (eventDetail) setIsLoading(false);
+  }, [getEventData, eventDetail]);
+
+  
+     
   // Eğer event verisi yoksa ana sayfaya yönlendir
-  if (!event) {
+  if (!eventDetail) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Paper sx={{ p: 4, textAlign: 'center' }}>
@@ -108,19 +112,17 @@ export default function CardDetails() {
     );
   }
 
-  const {
-    id,
-    title = "Etkinlik Başlığı",
-    description = "Etkinlik açıklaması mevcut değil",
-    date,
-    community,
-    address = "Adres belirtilmedi",
-    avatarGroup = [],
-    image,
-    organizer = "Organizatör",
-    coordinates,
-    guestCount = 0
-  } = event;
+const {
+  title,
+  image,
+  community,
+  description,
+  date,
+  organizer,
+  guestCount = 0,
+  avatarGroup = [],
+} = eventDetail
+
 
   const formatDate = (dateValue) => {
     if (!dateValue) return "Tarih belirtilmedi";
@@ -142,18 +144,9 @@ export default function CardDetails() {
 
   const communityInfo = getCommunityInfo(community);
 
-  // Koordinat kontrolü
-  const hasValidCoordinates = coordinates &&
-    coordinates.lat &&
-    coordinates.lng &&
-    !isNaN(Number(coordinates.lat)) &&
-    !isNaN(Number(coordinates.lng));
+ 
 
-  const mapCenter = hasValidCoordinates ?
-    [Number(coordinates.lat), Number(coordinates.lng)] :
-    [51.1657, 10.4515];
-
-  //const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
+  const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
 
   const handleFavoriteClick = () => {
     setIsFavorited(!isFavorited);
@@ -209,7 +202,7 @@ export default function CardDetails() {
             <CardMedia
               component="img"
               height="400"
-              image={image}
+             //{events[0].image}
               alt={`${title} görseli`}
               sx={{ objectFit: 'cover' }}
             />
@@ -219,7 +212,7 @@ export default function CardDetails() {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                 <Box sx={{ flex: 1 }}>
                   <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                    {title}
+                    {eventDetail.title}
                   </Typography>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -270,7 +263,7 @@ export default function CardDetails() {
                     📝 Etkinlik Açıklaması
                   </Typography>
                   <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, mb: 4 }}>
-                    {description}
+                    {eventDetail.description}
                   </Typography>
 
                   {/* Date and Time */}
@@ -291,16 +284,10 @@ export default function CardDetails() {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
                       <LocationOn sx={{ color: 'primary.main', mt: 0.5 }} />
-                      <Typography variant="body1">{address}</Typography>
+                      <Typography variant="body1">{eventDetail.location}</Typography>
                     </Box>
 
-                    {hasValidCoordinates && (
-                      <Box sx={{ mt: 2, p: 2, bgcolor: 'blue.50', borderRadius: 1 }}>
-                        <Typography variant="body2" color="primary">
-                          📍 Koordinatlar: {Number(coordinates.lat).toFixed(6)}, {Number(coordinates.lng).toFixed(6)}
-                        </Typography>
-                      </Box>
-                    )}
+                    
                   </Paper>
 
                   {/* Participants */}
@@ -338,64 +325,7 @@ export default function CardDetails() {
                 </Grid>
               </Grid>
 
-              {/* Map Section */}
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-                  🗺️ Harita Görünümü
-                </Typography>
-
-                {hasValidCoordinates ? (
-                  <Paper sx={{ p: 2, borderRadius: 2 }}>
-                    <Box sx={{
-                      height: 400,
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      position: 'relative'
-                    }}>
-                      <MapContainer
-                        center={mapCenter}
-                        zoom={15}
-                        scrollWheelZoom={true}
-                        style={{ height: '100%', width: '100%' }}
-                        key={`detailmap-${id}`}
-                      >
-                        <TileLayer
-                          attribution='&copy; OpenStreetMap contributors'
-                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <Marker position={mapCenter}>
-                          <Popup maxWidth={300}>
-                            <div style={{ minWidth: '250px' }}>
-                              <Typography variant="subtitle1" fontWeight="bold">
-                                {title}
-                              </Typography>
-                              <Typography variant="body2" sx={{ mt: 1 }}>
-                                {address}
-                              </Typography>
-                              <Typography variant="body2" sx={{ mt: 1 }}>
-                                {formatDate(date)}
-                              </Typography>
-                              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                                Koordinatlar: {Number(coordinates.lat).toFixed(6)}, {Number(coordinates.lng).toFixed(6)}
-                              </Typography>
-                            </div>
-                          </Popup>
-                        </Marker>
-                      </MapContainer>
-                    </Box>
-                  </Paper>
-                ) : (
-                  <Paper sx={{ p: 4, textAlign: 'center', bgcolor: 'error.50' }}>
-                    <LocationOn sx={{ fontSize: 48, color: 'error.main', mb: 2 }} />
-                    <Typography variant="h6" color="error" gutterBottom>
-                      Harita Gösterilemiyor
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Bu etkinlik için geçerli koordinat bilgisi bulunmuyor.
-                    </Typography>
-                  </Paper>
-                )}
-              </Box>
+             
             </CardContent>
           </Card>
         </Box>

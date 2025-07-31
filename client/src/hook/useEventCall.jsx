@@ -5,7 +5,7 @@ import {
     eventSuccess,
     getEventCategoryGroupSuccess,
     getChatsSuccess,
-    getEvetDetailsSuccess,
+
 } from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -83,19 +83,6 @@ const useEventCall = () => {
         }
     };
 
-    /* -------------------------------------------------------------------------- */
-    /*                               GET EVENT DETAİLS                            */
-    /* -------------------------------------------------------------------------- */
-    const getEventDetails = async (url, info) => {
-        dispatch(fetchStart());
-        try {
-            const { data } = await axiosWithToken.get(`${url}/${info._id}`, info);
-            getEvetDetailsSuccess(data);
-            
-        } catch (error) {
-            dispatch(fetchFail());
-        }
-    };
 
 
 
@@ -134,7 +121,7 @@ const useEventCall = () => {
         updateEventData,
         getMessage,
         getEventCategoryGroup,
-        getEventDetails
+        
     };
 };
 export default useEventCall;
