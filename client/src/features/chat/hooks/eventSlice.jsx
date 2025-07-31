@@ -6,6 +6,17 @@ const eventSlice = createSlice({
         loading: false,
         error: false,
         events: [],
+        event:{
+             _id: null,
+            title: "", 
+            description: "", 
+            participants: [],
+            date: null, 
+            categoryId: "", 
+            time: "", 
+            image: "", 
+            location: "" 
+        },
         groups: [],
         chats: [],
         categories: [],
@@ -24,6 +35,7 @@ const eventSlice = createSlice({
             state.loading = false;
             state.error = false;
         },
+      
         getEventCategoryGroupSuccess: (state, { payload }) => {
             state.loading = false;
             state.events = payload[0];
@@ -34,18 +46,20 @@ const eventSlice = createSlice({
             state.loading = false;
             state.messages = payload
         },
-        getEvetDetailsSuccess: (state, { payload }) => {
-            state.loading = false;
-            state.eventDetails = payload
+       setEvent: (state, { payload }) => {
+            state.event = payload
+            
+            state.error = false;
         },
     },
 });
 export const {
     fetchFail,
     fetchStart,
+    setEvent,
     eventSuccess,
     getEventCategoryGroupSuccess,
     getMessageSuccess,
-    getEvetDetailsSuccess
+    
 } = eventSlice.actions;
 export default eventSlice.reducer;
