@@ -1,5 +1,4 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import ProfileForm from "../pages/ProfileEdit";
@@ -14,11 +13,7 @@ import CreateEvent from "../pages/CreateEvent";
 import ChatPage from "../pages/ChatPage";
 import MyEvents from "../pages/myEvents";
 
-
 const AppRouter = () => {
-    const { currentUser } = useSelector((state) => state.auth);
-
-
   return (
     <Router>
       <Routes>
@@ -29,7 +24,7 @@ const AppRouter = () => {
           <Route path="" element={<Dashboard />}>
             <Route index element={<Home />} />
             <Route path="create-event" element={<CreateEvent />} />
-            <Route path="details/:id" element={<CardDetails />} />
+            <Route path="details/:_id" element={<CardDetails />} />
             <Route path="profile" element={<Profile />} />
             <Route path="my-events" element={<MyEvents />} />
             <Route path="about" element={<About />} />
@@ -40,7 +35,6 @@ const AppRouter = () => {
       </Routes>
     </Router>
   );
-
 };
 
 export default AppRouter;
