@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
+import { Grid } from "@mui/material";
+=======
 import { Grid, Box } from "@mui/material";
+>>>>>>> main
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useSelector } from "react-redux";
@@ -9,32 +13,44 @@ import SearchBar from "../components/SearchBar";
 
 const Home = () => {
   const { getEventData } = useEventCall();
-  const { events } = useSelector((state) => state.event);
+  const { events, categories } = useSelector((state) => state.event);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    getEventData("events"); // tüm eventleri redux'a alıyoruz
+    getEventData("events");
+    getEventData("categories");
   }, []);
 
   const normalize = (str) =>
-    (str || "")
-      .toLocaleLowerCase("tr-TR")
-      .replace(/\s+/g, " ")
-      .trim();
+    (str || "").toLocaleLowerCase("tr-TR").replace(/\s+/g, " ").trim();
 
-  // 🔎 Genel arama: event içindeki tüm field'larda arama
   const filteredEvents =
     search.trim() === ""
       ? events
-      : (events || []).filter((event) =>
-          Object.values(event).some((value) =>
+      : (events || []).filter((event) => {
+          // kategori adını bul
+          const categoryName =
+            event?.categoryId?.name || // eğer obje ise
+            categories.find((cat) => cat._id === event.categoryId)?.name || // eğer sadece id ise
+            "";
+
+          // aranabilir alanlar
+          const searchableValues = [
+            event.title || "",
+            event.description || "",
+            event.location || "",
+            categoryName,
+          ];
+
+          // herhangi bir alan eşleşiyorsa true
+          return searchableValues.some((value) =>
             normalize(String(value)).includes(normalize(search))
-          )
-        );
+          );
+        });
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      {/* SearchBar sadece search state'ini yönetiyor */}
+      {/* Arama barı */}
       <SearchBar search={search} setSearch={setSearch} />
 
       <Grid container spacing={3} sx={{ mt: 3 }}>

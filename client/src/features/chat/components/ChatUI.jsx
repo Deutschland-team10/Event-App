@@ -50,8 +50,8 @@ const ChatUI = () => {
             <Box flex={1} display="flex" flexDirection="column">
                 {activeChat ? (
                     <>
-                        <ChatScreen chat={activeChat} socket={socket}/>
-                        <MessageForm chatId={activeChat.id} socket={socket}/>
+                        <ChatScreen chat={activeChat} socket={socket} />
+                        <MessageForm chatId={activeChat.id} socket={socket} />
                     </>
                 ) : (
                     <Box display="flex" justifyContent="center" alignItems="center" flex={1}>
