@@ -37,6 +37,7 @@ module.exports = {
             throw new Error('NoPermission: You must login and to be Admin.')
         }
     },
+
     isStaff: (req, res, next) => {
 
         // only Admin or Staff:
@@ -50,6 +51,7 @@ module.exports = {
             throw new Error('NoPermission: You must login and to be Staff.')
         }
     },
+
     isOwnEvent: async (req, res, next) => {
 
         // only Admin or Staff:
