@@ -257,7 +257,6 @@ export default function EventCard({
           onClick={(e) => {
             e.stopPropagation();
             if (handleOpenForm && setInitialState) {
-              console.log("merhaba")
               handleOpenForm("event");
               setInitialState({
                 _id,

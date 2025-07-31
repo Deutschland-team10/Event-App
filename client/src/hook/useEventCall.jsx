@@ -4,7 +4,7 @@ import {
     fetchStart,
     eventSuccess,
     getEventCategoryGroupSuccess,
-    getMessageSuccess,
+    getChatsSuccess,
     getEvetDetailsSuccess,
 } from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
@@ -103,7 +103,7 @@ const useEventCall = () => {
         dispatch(fetchStart());
         try {
             const { data } = await axiosWithToken.get(`${url}`);
-            dispatch(getMessageSuccess({ data, url }));
+            dispatch(getChatsSuccess({ data, url }));
         } catch (error) {
             dispatch(fetchFail());
         }
