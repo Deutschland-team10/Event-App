@@ -22,7 +22,7 @@ const eventSlice = createSlice({
       state.error = true;
     },
     eventSuccess: (state, { payload: { data, url } }) => {
-      state.events = data.result;
+      state[url] = data.result;
       state.loading = false;
       state.error = false;
     },
