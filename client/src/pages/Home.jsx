@@ -13,9 +13,39 @@ const Home = () => {
   const { events } = useSelector((state) => state.event);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    getEventData("events"); // tüm eventleri redux'a alıyoruz
-  }, []);
+  const [formType, setFormType] = useState("event");
+     const [open, setOpen] = React.useState(false);
+    const [initialState, setInitialState] = useState({
+            _id: null,
+            title: "",
+            description: "",
+            date: null,
+            categoryId: null,
+            time: "12:30",
+            image: "",
+            location: ""
+        });
+    useEffect(() => {
+        getEventData("events");
+    }, []);
+     const handleOpenForm = (type) => {
+        setFormType(type);
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setInitialState({
+            _id: null,
+            title: "",
+            description: "",
+            date: null,
+            categoryId: null,
+            time: "",
+            image: "",
+            location: ""
+        });
+    };
+
 
   const normalize = (str) =>
     (str || "").toLocaleLowerCase("tr-TR").replace(/\s+/g, " ").trim();
