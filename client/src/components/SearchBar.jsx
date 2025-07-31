@@ -7,7 +7,7 @@ const SearchBar = ({ search, setSearch }) => {
     <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
       <TextField
         variant="outlined"
-        placeholder="Suchen (Stadt, Titel, Beschreibung vb.)"
+        placeholder="Suchen (Stadt, Titel, Category, Jahr, Beschreibung vb.)"
         sx={{ width: "100%", maxWidth: 600 }}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
