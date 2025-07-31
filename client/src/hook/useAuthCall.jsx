@@ -54,7 +54,6 @@ const useAuthCall = () => {
         try {
             const { data } = await axiosWithoutHeader.post(`auth/login`, userInfo);
             dispatch(loginSuccess(data));
-            console.log(data);
             navigate("/home");
             toastSuccessNotify("Login is successful");
         } catch (error) {

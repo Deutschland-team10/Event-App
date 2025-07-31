@@ -4,8 +4,8 @@ import {
     fetchStart,
     eventSuccess,
     getEventCategoryGroupSuccess,
-    getMessageSuccess,
-    
+    getChatsSuccess,
+
 } from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -83,19 +83,6 @@ const useEventCall = () => {
         }
     };
 
-    /* -------------------------------------------------------------------------- */
-    /*                               GET EVENT DETAİLS                            */
-    /* -------------------------------------------------------------------------- */
-//     const getEventDetails = async (id) => {
-//     dispatch(fetchStart());
-//     try {
-//         const { data } = await axiosWithToken.get(`events/${id}`);
-//         dispatch(getEvetDetailsSuccess(data));
-//     } catch (error) {
-//         dispatch(fetchFail());
-//         toastErrorNotify("Etkinlik verisi alınamadı!");
-//     }
-// };
 
 
 
@@ -103,7 +90,7 @@ const useEventCall = () => {
         dispatch(fetchStart());
         try {
             const { data } = await axiosWithToken.get(`${url}`);
-            dispatch(getMessageSuccess({ data, url }));
+            dispatch(getChatsSuccess({ data, url }));
         } catch (error) {
             dispatch(fetchFail());
         }

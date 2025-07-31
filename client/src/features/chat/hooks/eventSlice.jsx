@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const eventSlice = createSlice({
+
     name: "event",
     initialState: {
         loading: false,
@@ -51,15 +52,40 @@ const eventSlice = createSlice({
             
             state.error = false;
         },
+
     },
+    eventSuccess: (state, { payload: { data, url } }) => {
+      state[url] = data.result;
+      state.loading = false;
+      state.error = false;
+    },
+    setSearch: (state, { payload }) => { // 🔥 arama için reducer
+      state.search = payload;
+    },
+    getEventCategoryGroupSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.events = payload[0];
+      state.categories = payload[1];
+      state.groups = payload[2];
+    },
+    getChatsSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.messages = payload;
+    },
+    getEvetDetailsSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.eventDetails = payload;
+    },
+  },
 });
 export const {
+  
     fetchFail,
     fetchStart,
     setEvent,
     eventSuccess,
     getEventCategoryGroupSuccess,
     getMessageSuccess,
-    
+   
 } = eventSlice.actions;
 export default eventSlice.reducer;
