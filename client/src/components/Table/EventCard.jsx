@@ -31,7 +31,7 @@ import { useNavigate } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import useEventCall from "../../hook/useEventCall";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -43,24 +43,24 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-export default function EventCard({
-  _id,
-  title,
-  description,
-  participants,
-  date,
-  location,
-  creater,
-  categoryId,
-  image,
-  handleOpenForm,
-  avatarGroup,
-  setInitialState,
-}) {
+export default function EventCard({ event, handleOpenForm, setInitialState }) {
+  const {
+    _id,
+    title,
+    description,
+    participants,
+    date,
+    location,
+    creater,
+    categoryId,
+    image,
+    avatarGroup,
+  } = event;
   const [expanded, setExpanded] = React.useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { getDeleteData } = useEventCall();
 
   // Tek fonksiyon: ikon + renk
@@ -109,10 +109,12 @@ export default function EventCard({
     setExpanded(!expanded);
   };
 
-  const handleCardClick = () => {
-    navigate("/home/details/" + _id);
-    console.log("Card clicked:", event);
+ const handleCardClick = (event) => {
+     console.log("Card clicked:", event);
+    //dispatch(setEvent(event))
+    navigate("/home/details/" + event._id);
   };
+
 
   const formatDate = (dateValue) => {
     if (!dateValue) return "Datum nicht angegeben";
@@ -129,7 +131,7 @@ export default function EventCard({
 
   return (
     <Card
-      onDoubleClick={handleCardClick}
+      onDoubleClick={()=>handleCardClick(event)}
       sx={{
         maxwidth: 345,
         height: 600,

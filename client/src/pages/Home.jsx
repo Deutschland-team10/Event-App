@@ -17,10 +17,7 @@ const Home = () => {
   }, []);
 
   const normalize = (str) =>
-    (str || "")
-      .toLocaleLowerCase("tr-TR")
-      .replace(/\s+/g, " ")
-      .trim();
+    (str || "").toLocaleLowerCase("tr-TR").replace(/\s+/g, " ").trim();
 
   // 🔎 Genel arama: event içindeki tüm field'larda arama
   const filteredEvents =
@@ -38,23 +35,24 @@ const Home = () => {
       <SearchBar search={search} setSearch={setSearch} />
 
       <Grid container spacing={3} sx={{ mt: 3 }}>
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map((event, index) => (
-            <Grid item xs={12} sm={6} md={4} key={event._id || index}>
-              <EventCard {...event} />
-            </Grid>
-          ))
-        ) : (
-          search && (
-            <Box textAlign="center" mt={3} width="100%">
-              <p>"{search}" için sonuç bulunamadı.</p>
-            </Box>
-          )
-        )}
+        {filteredEvents.length > 0
+          ? filteredEvents.map((event, index) => (
+              <Grid item xs={12} sm={6} md={4} key={event._id || index}>
+                <EventCard
+                  event={event}
+                  handleOpenForm={handleOpenForm}
+                  setInitialState={setInitialState}
+                />
+              </Grid>
+            ))
+          : search && (
+              <Box textAlign="center" mt={3} width="100%">
+                <p>"{search}" için sonuç bulunamadı.</p>
+              </Box>
+            )}
       </Grid>
     </LocalizationProvider>
   );
 };
 
 export default Home;
-
