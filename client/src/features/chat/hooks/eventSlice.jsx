@@ -76,7 +76,7 @@ const eventSlice = createSlice({
       state.loading = false;
       state.eventDetails = payload;
     },
-  },
+  
 });
 export const {
   
