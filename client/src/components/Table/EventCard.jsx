@@ -43,7 +43,7 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-export default function EventCard({ event, handleOpenForm, setInitialState }) {
+export default function EventCard({ event, handleOpenForm, setInitialState,setGoster }) {
   const {
     _id,
     title,
@@ -56,7 +56,7 @@ export default function EventCard({ event, handleOpenForm, setInitialState }) {
     image,
     avatarGroup,
   } = event;
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const navigate = useNavigate();
@@ -109,12 +109,11 @@ export default function EventCard({ event, handleOpenForm, setInitialState }) {
     setExpanded(!expanded);
   };
 
- const handleCardClick = (event) => {
-     console.log("Card clicked:", event);
+  const handleCardClick = (event) => {
+    console.log("Card clicked:", event);
     //dispatch(setEvent(event))
     navigate("/home/details/" + event._id);
   };
-
 
   const formatDate = (dateValue) => {
     if (!dateValue) return "Datum nicht angegeben";
@@ -131,7 +130,7 @@ export default function EventCard({ event, handleOpenForm, setInitialState }) {
 
   return (
     <Card
-      onDoubleClick={()=>handleCardClick(event)}
+      onDoubleClick={() => handleCardClick(event)}
       sx={{
         maxwidth: 345,
         height: 600,
@@ -289,18 +288,20 @@ export default function EventCard({ event, handleOpenForm, setInitialState }) {
         </IconButton>
         <IconButton
           aria-label="edit"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (handleOpenForm && setInitialState) {
+          onClick={() => {setGoster(true);
+            if (handleOpenForm && setInitialState ) {
               handleOpenForm("event");
               setInitialState({
                 _id,
                 title,
                 description,
+                participants,
                 date,
                 location,
-                image,
+                creater,
                 categoryId,
+                image,
+                avatarGroup,
               });
             }
           }}
