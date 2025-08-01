@@ -2,6 +2,7 @@ import React from "react";
 import {
     fetchFail,
     fetchStart,
+    setEvent,
     eventSuccess,
     getEventCategoryGroupSuccess,
     getChatsSuccess,
@@ -63,7 +64,7 @@ const useEventCall = () => {
         try {
             const { data } = await axiosWithToken.post(`${url}`, info);
             console.log(data);
-            getEventData(url);
+            setEvent(url);
             toastSuccessNotify(`${url} is saved successfully!`);
         } catch (error) {
             dispatch(fetchFail());
