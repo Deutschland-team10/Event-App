@@ -48,7 +48,10 @@ const eventSlice = createSlice({
             state.event = payload
             state.error = false;
         },
-    },
+      
+     },
+  
+
 });
 export const {
     fetchFail,

@@ -11,27 +11,19 @@ import {
   Avatar,
   AvatarGroup,
   Button,
-  IconButton,
   Divider,
   Paper,
   Grid,
-  Fade,
-  Breadcrumbs,
-  Link
+  Fade
 } from '@mui/material';
 import {
   ArrowBack,
   LocationOn,
-  Event,
   People,
   Share,
-  Favorite,
-  FavoriteBorder,
   CalendarToday,
-  AccessTime,
   Person
 } from '@mui/icons-material';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import useEventCall from '../hook/useEventCall';
