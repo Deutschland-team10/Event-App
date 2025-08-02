@@ -20,6 +20,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import useEventCall from "../hook/useEventCall";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const EventForm = ({ open, handleClose, initialState, setonClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -32,6 +33,7 @@ const EventForm = ({ open, handleClose, initialState, setonClose }) => {
   const [selectedImage, setSelectedImage] = useState(null); // File veya string
   const [imagePreview, setImagePreview] = useState(initialState.image || "");
   const [imageUrl, setImageUrl] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setInfo({ ...info, [e.target.name]: e.target.value });
@@ -96,7 +98,8 @@ const EventForm = ({ open, handleClose, initialState, setonClose }) => {
       if (info._id) {
         await updateEventFormData("events", formData); // update
       } else {
-        await postEventFormData("events", formData); // create
+        await postEventFormData("events", formData)
+        navigate("/home"); // create
       }
 
       // Temizle & kapat
