@@ -43,7 +43,12 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-export default function EventCard({ event, handleOpenForm, setInitialState,setGoster }) {
+export default function EventCard({
+  event,
+  handleOpenForm,
+  setInitialState,
+  setonClose,
+}) {
   const {
     _id,
     title,
@@ -56,12 +61,43 @@ export default function EventCard({ event, handleOpenForm, setInitialState,setGo
     image,
     avatarGroup,
   } = event;
+  
   const [expanded, setExpanded] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { getDeleteData } = useEventCall();
+
+  const renderEventImage = (image) => {
+    if (!image) return null;
+
+    let imgSrc;
+
+    // Eğer "http" ile başlıyorsa → zaten tam URL
+    if (image.startsWith("http")) {
+      imgSrc = image;
+    }
+    // Eğer "/upload/..." gibi relative path ise → BASE_URL ekle
+    else if (image.startsWith("/upload")) {
+      imgSrc = `${import.meta.env.VITE_BASE_URL}${image}`;
+    }
+    // Beklenmedik durum için fallback
+    else {
+      imgSrc = "/fallback.jpg";
+    }
+
+    return (
+      <img
+        src={imgSrc}
+        alt="Event"
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        onError={(e) => {
+          e.target.src = "/fallback.jpg"; // hata olursa default resim
+        }}
+      />
+    );
+  };
 
   // Tek fonksiyon: ikon + renk
   const getCategoryStyle = (name) => {
@@ -170,16 +206,11 @@ export default function EventCard({ event, handleOpenForm, setInitialState,setGo
       />
 
       <CardMedia
-        component="img"
-        height="200"
-        image={image || "/default-image.jpg"}
-        alt={`${title} görseli`}
-        sx={{
-          objectFit: "cover",
-          transition: "transform 0.3s ease",
-          "&:hover": { transform: "scale(1.02)" },
-        }}
-      />
+        component="div"
+        sx={{ height: 200, overflow: "hidden", borderRadius: 2 }}
+      >
+        {renderEventImage(image)}
+      </CardMedia>
 
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
@@ -283,26 +314,17 @@ export default function EventCard({ event, handleOpenForm, setInitialState,setGo
             }}
             onClick={() => {
               getDeleteData("events", _id);
+              navigate("/home");
             }}
           />
         </IconButton>
         <IconButton
           aria-label="edit"
-          onClick={() => {setGoster(true);
-            if (handleOpenForm && setInitialState ) {
+          onClick={() => {
+            setonClose(true);
+            if (handleOpenForm && setInitialState) {
               handleOpenForm("event");
-              setInitialState({
-                _id,
-                title,
-                description,
-                participants,
-                date,
-                location,
-                creater,
-                categoryId,
-                image,
-                avatarGroup,
-              });
+              setInitialState(event);
             }
           }}
         >

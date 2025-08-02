@@ -16,8 +16,7 @@ const EventSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        type: String,
-        //required: true {event katilimcilar olmadan da olusturulabilir}
+        
       },
     ],
 
@@ -25,7 +24,7 @@ const EventSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Group",
-        // required: true,
+        
       },
     ],
 
@@ -70,7 +69,6 @@ const EventSchema = new mongoose.Schema(
 
     image: {
       type: String,
-      trim: true,
     },
   },
 
