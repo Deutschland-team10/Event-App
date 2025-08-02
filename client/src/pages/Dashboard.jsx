@@ -74,7 +74,9 @@ const Dashboard = () => {
 
             <Tooltip title={currentUser.username}>
               <IconButton onClick={handleOpenUserMenu}>
-                <Avatar sx={{ width: 30, height: 30 }} />
+                <Avatar 
+                src={currentUser.image || ""}
+                sx={{ width: 30, height: 30 }} />
               </IconButton>
             </Tooltip>
 
