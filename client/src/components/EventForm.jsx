@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -21,88 +21,92 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import useEventCall from "../hook/useEventCall";
 import { useSelector } from "react-redux";
 
-const EventForm = ({ open, handleClose, initialState }) => {
+const EventForm = ({ open, handleClose, initialState, setonClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const { postEventData, getEventData, updateEventData } = useEventCall();
+  const { postEventFormData, updateEventFormData } = useEventCall();
   const { categories } = useSelector((state) => state.event);
-  const [info, setInfo] = useState(initialState);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [info, setInfo] = useState({
+    ...initialState,
+    date: initialState?.date ? new Date(initialState.date) : null,
+  });
+  const [selectedImage, setSelectedImage] = useState(null); // File veya string
+  const [imagePreview, setImagePreview] = useState(initialState.image || "");
   const [imageUrl, setImageUrl] = useState("");
-
-  useEffect(() => {
-    getEventData("categories");
-  }, []);
 
   const handleChange = (e) => {
     setInfo({ ...info, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    if (initialState) {
+      setInfo({
+        ...initialState,
+        categoryId:
+          typeof initialState.categoryId === "object"
+            ? initialState.categoryId._id
+            : initialState.categoryId || "",
+        date: initialState?.date ? new Date(initialState.date) : null,
+      });
+      setImagePreview(initialState.image || "");
+    }
+  }, [initialState]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      setImageUrl(""); // URL'yi temizle
-
-      // Önizleme oluştur
+      setImageUrl("");
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
   const handleUrlImage = () => {
-    if (imageUrl) {
+    if (imageUrl.trim() !== "") {
+      setSelectedImage(imageUrl); // URL string olarak setleniyor
       setImagePreview(imageUrl);
-      setSelectedImage(imageUrl);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    postEventData("events", info);
-
-    const formData = new FormData();
-    formData.append("image", selectedFile);
-
-    // Diğer form verilerini ekleyin
-    // formData.append('title', eventTitle);
-    // formData.append('description', eventDescription);
-
-    // Mevcut form verilerini ekle
-    Object.keys(info).forEach((key) => {
-      // Date objesini string'e çevir
-      if (key === "date" && info[key] instanceof Date) {
-        formData.append(key, info[key].toISOString());
-      } else {
-        formData.append(key, info[key]);
-      }
-    });
-
-    // Resim ekle (dosya veya URL)
-    if (selectedImage instanceof File) {
-      formData.append("image", selectedImage);
-    } else if (typeof selectedImage === "string") {
-      formData.append("imageUrl", selectedImage);
-    }
-
     try {
-      if (info._id) {
-        await updateEventData(`events/${info._id}`, formData);
-      } else {
-        await postEventData("events", formData);
+      const formData = new FormData();
+
+      if (info._id) formData.append("_id", info._id);
+      formData.append("title", info.title || "");
+      formData.append("description", info.description || "");
+      formData.append("date", info.date || "");
+      formData.append("time", info.time || "");
+      formData.append("location", info.location || "");
+      formData.append("categoryId", info.categoryId || "");
+
+      // ✅ image alanı
+      if (selectedImage instanceof File) {
+        formData.append("image", selectedImage);
+      } else if (
+        typeof selectedImage === "string" &&
+        selectedImage.trim() !== ""
+      ) {
+        formData.append("image", selectedImage);
       }
 
-      getEventData("events");
-      handleClose();
+      // 🔑 Create / Update ayrımı
+      if (info._id) {
+        await updateEventFormData("events", formData); // update
+      } else {
+        await postEventFormData("events", formData); // create
+      }
+
+      // Temizle & kapat
+      handleClose?.(); // handleClose varsa çağır
+      setonClose?.(false); // setGoster varsa çağır
       setSelectedImage(null);
       setImagePreview(null);
       setImageUrl("");
     } catch (error) {
-      console.error("Form gönderim hatası:", error);
-      // Hata durumunda kullanıcıyı bilgilendirebilirsiniz
+      console.error("Form submit error:", error);
       setSnackbarOpen(true);
     }
   };
@@ -134,30 +138,39 @@ const EventForm = ({ open, handleClose, initialState }) => {
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         }}
       >
-        {/* Image Upload Section */}
-        <Box>
-          <Button variant="outlined" component="label" sx={{ mt: 2 }}>
-            Bild hochladen
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleImageChange}
-            />
-          </Button>
+        <Box component="form" onSubmit={handleSubmit}>
+          {/* Hidden id */}
+          <input type="hidden" name="_id" value={info._id || ""} />
 
-          <TextField
-            label="Oder Bild-URL"
-            variant="outlined"
-            fullWidth
-            value={imageUrl}
-            sx={{ mt: 2 }}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-
-          <Button variant="contained" sx={{ mt: 2 }} onClick={handleUrlImage}>
-            Bild aus URL hinzufügen
-          </Button>
+          {/* Image Upload */}
+          {!imagePreview && (
+            <>
+              <Button variant="outlined" component="label" sx={{ mt: 2 }}>
+                Bild hochladen
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageChange}
+                />
+              </Button>
+              <TextField
+                label="Oder Bild-URL"
+                variant="outlined"
+                fullWidth
+                value={imageUrl}
+                sx={{ mt: 2 }}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+              <Button
+                variant="contained"
+                sx={{ mt: 2 }}
+                onClick={handleUrlImage}
+              >
+                Bild aus URL hinzufügen
+              </Button>
+            </>
+          )}
 
           {imagePreview && (
             <Box sx={{ mt: 2, textAlign: "center" }}>
@@ -175,6 +188,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
                 onClick={() => {
                   setImagePreview(null);
                   setSelectedImage(null);
+                  setImageUrl("");
                 }}
                 sx={{ mt: 1 }}
               >
@@ -182,9 +196,8 @@ const EventForm = ({ open, handleClose, initialState }) => {
               </Button>
             </Box>
           )}
-        </Box>
 
-        <Box component="form" onSubmit={handleSubmit}>
+          {/* Title */}
           <TextField
             fullWidth
             id="title"
@@ -196,6 +209,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
             sx={commonTextFieldStyles}
           />
 
+          {/* Description */}
           <TextField
             fullWidth
             id="description"
@@ -216,6 +230,7 @@ const EventForm = ({ open, handleClose, initialState }) => {
             sx={commonTextFieldStyles}
           />
 
+          {/* Date */}
           <DatePicker
             name="date"
             label="Event Datum"
@@ -230,16 +245,30 @@ const EventForm = ({ open, handleClose, initialState }) => {
             }}
           />
 
+          {/* Time */}
+          <TextField
+            fullWidth
+            id="time"
+            name="time"
+            label="Event Zeit"
+            type="time"
+            value={info.time}
+            onChange={handleChange}
+            margin="normal"
+            sx={commonTextFieldStyles}
+            InputLabelProps={{ shrink: true }}
+          />
+
+          {/* Category */}
           <FormControl fullWidth margin="normal">
             <InputLabel id="categoryId-label" sx={{ color: "#555" }}>
-              Gemeinschaft
+              Kategorie
             </InputLabel>
             <Select
               labelId="categoryId-label"
               id="categoryId"
               name="categoryId"
               value={info.categoryId}
-              label="Gemeinschaft"
               onChange={handleChange}
               sx={{
                 ...commonTextFieldStyles,
@@ -259,11 +288,12 @@ const EventForm = ({ open, handleClose, initialState }) => {
             </Select>
           </FormControl>
 
+          {/* Location */}
           <TextField
             fullWidth
             id="address"
             name="location"
-            label="location"
+            label="Location"
             value={info.location}
             onChange={handleChange}
             margin="normal"
@@ -276,6 +306,8 @@ const EventForm = ({ open, handleClose, initialState }) => {
             }}
             sx={commonTextFieldStyles}
           />
+
+          {/* Submit */}
           <Button
             color="primary"
             variant="contained"

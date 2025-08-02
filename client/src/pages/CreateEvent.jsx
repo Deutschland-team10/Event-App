@@ -115,18 +115,7 @@ const CreateEvent = () => {
                 )}
             </Paper>
 
-            {/* Etkinlik Kartları */}
-            <Grid container spacing={3} sx={{ mt: 3 }}>
-                {events.map((event, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={event.id || index}>
-                        <EventCard  
-                            event={event} 
-                             handleOpenForm={handleOpenForm}
-                             setInitialState={setInitialState}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
+           
         </LocalizationProvider>
     );
 };

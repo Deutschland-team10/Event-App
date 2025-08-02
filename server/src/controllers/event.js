@@ -8,8 +8,8 @@ const User = require("../models/user");
 const Group = require("../models/group");
 
 module.exports = {
-    list: async (req, res) => {
-        /*
+  list: async (req, res) => {
+    /*
             #swagger.tags=["Events"]
             #swagger.summary="List Events"
             #swagger.description=`
@@ -22,17 +22,17 @@ module.exports = {
                     </ul>`
         */
 
-        const result = await res.getModelList(Event, {} ,["creater","categoryId"]);
+    const result = await res.getModelList(Event, {}, ["creater", "categoryId"]);
 
-        res.status(200).send({
-            error: false,
-            details: await res.getModelListDetails(Event),
-            result,
-        });
-    },
+    res.status(200).send({
+      error: false,
+      details: await res.getModelListDetails(Event),
+      result,
+    });
+  },
 
-    create: async (req, res) => {
-        /* 
+  create: async (req, res) => {
+    /* 
             #swagger.tags=["Events"]
             #swagger.summary="Create Events"
             #swagger.parameters['body']={
@@ -50,84 +50,90 @@ module.exports = {
             }
         */
 
-        const participantInfos = req.body.participants || [];
-        const groupInfos = req.body.sharedGroup || [];
-        const imagePath = req.file ? '/uploads/' + req.file.filename : null;
+    const participantInfos = req.body.participants || [];
+    const groupInfos = req.body.sharedGroup || [];
+    let imagePath = null;
 
-        const participantIds = [];
-        const groupIds = [];
+    if (req.file) {
+      imagePath = "/upload/" + req.file.filename; // dosya kaydı
+    } else if (req.body.image) {
+      imagePath = req.body.image; // URL string kaydı
+    }
 
-        let user, group;
+    const participantIds = [];
+    const groupIds = [];
 
-        for (let info of participantInfos) {
-            if (typeof info === "object") {
-                user = await User.findOne({ email: info.email });
-                if (!user) {
-                    user = await User.create({ ...info });
-                }
-            } else if (typeof info === "string") {
-                user = await User.findById(info);
-            }
+    let user, group;
 
-            if (user) participantIds.push(user._id);
+    for (let info of participantInfos) {
+      if (typeof info === "object") {
+        user = await User.findOne({ email: info.email });
+        if (!user) {
+          user = await User.create({ ...info });
         }
+      } else if (typeof info === "string") {
+        user = await User.findById(info);
+      }
 
-        for (let info of groupInfos) {
-            if (typeof info === "object") {
-                group = await Group.findOne({ title: info.title });
-                if (!group) {
-                    group = await Group.create({ ...info, creater: req.user._id });
-                }
-            } else if (typeof info === "string") {
-                group = await Group.findById(info);
-            }
+      if (user) participantIds.push(user._id);
+    }
 
-            if (group) groupIds.push(group._id);
+    for (let info of groupInfos) {
+      if (typeof info === "object") {
+        group = await Group.findOne({ title: info.title });
+        if (!group) {
+          group = await Group.create({ ...info, creater: req.user._id });
         }
+      } else if (typeof info === "string") {
+        group = await Group.findById(info);
+      }
 
-        const result = await Event.create({
-            creater: req.user._id,
-            participants: participantIds,
-            sharedGroup: groupIds,
-            categoryId: req.body.categoryId,
-            title: req.body.title,
-            description: req.body.description,
-            date: req.body.date,
-            time: req.body.time,
-            location: req.body.location,
-            image: imagePath,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        });
+      if (group) groupIds.push(group._id);
+    }
 
-        res.status(201).send({
-            error: false,
-            message: "Event created successfully",
-            result,
-        });
-    },
+    const result = await Event.create({
+      creater: req.user._id,
+      participants: participantIds,
+      sharedGroup: groupIds,
+      categoryId: req.body.categoryId,
+      title: req.body.title,
+      description: req.body.description,
+      date: req.body.date,
+      time: req.body.time,
+      location: req.body.location,
+      image: imagePath,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    read: async (req, res) => {
-        /*
+    res.status(201).send({
+      error: false,
+      message: "Event created successfully",
+      result,
+    });
+  },
+
+  read: async (req, res) => {
+    /*
          #swagger.tags=["Events"]
          #swagger.summary="Read Event"
         */
 
-        const result = await Event.findOne({ _id: req.params.id }).populate([
-            { path: "creater", select: "username email" },
-            { path: "participants", select: "firstName lastName email" },
-            { path: "sharedGroup", select: "title location" },
-            { path: "categoryId", select: "name" },
-        ]);
+    const result = await Event.findOne({ _id: req.params.id }).populate([
+      { path: "creater", select: "username email" },
+      { path: "participants", select: "firstName lastName email" },
+      { path: "sharedGroup", select: "title location" },
+      { path: "categoryId", select: "name" },
+    ]);
 
-        res.status(200).send({
-            error: false,
-            result,
-        });
-    },
+    res.status(200).send({
+      error: false,
+      result,
+    });
+  },
 
-    update: async (req, res) => {
-        /* 
+  update: async (req, res) => {
+    /* 
             #swagger.tags=["Events"]
             #swagger.summary="Update Events"
             #swagger.parameters['body']={
@@ -145,28 +151,76 @@ module.exports = {
             }
         */
 
-        // Eğer yeni bir resim yüklendiyse
-        if (req.file) {
-            updateData.image = '/upload/' + req.file.filename;
+    // Eğer yeni bir resim yüklendiyse
+    let updateData = { ...req.body };
+
+    if (req.file) {
+        updateData.image = '/upload/' + req.file.filename;
+    } else if (req.body.image) {
+        updateData.image = req.body.image; // URL string desteği
+    }
+
+    const result = await Event.updateOne(
+        { _id: req.params.id },
+        updateData,
+        { new: true, runValidators: true }
+    );
+
+    res.status(202).send({
+        error: false,
+        result,
+    });
+  },
+
+  deletee: async (req, res) => {
+    const result = await Event.deleteOne({ _id: req.params.id });
+
+    res.status(result.deletedCount ? 204 : 404).send({
+      error: !result.deletedCount,
+      message: "Event is not found or already deleted",
+    });
+  },
+
+  joinEvent: async (req, res) => {
+        /*
+            #swagger.tags=["Events"]
+            #swagger.summary="Update Events"
+            #swagger.parameters['body']={
+                in:"body",
+                require:true,
+                schema:{
+                  $ref:'#/definitions/Event',
+                }
+            }
+            #swagger.parameters['image']={
+                in:"formData",
+                type:"file",
+                required:false,
+                name:"image"
+            }
+        */
+        const userId = req.user._id;
+        const eventId = req.params.eventId;
+        const event = await Event.findOne({ _id: eventId });
+        if (!event) {
+            throw new Error("Event not found");
         }
-
-        const result = await Event.updateOne({ _id: req.params.id }, req.body, {
-            new: true,
-            runValidators: true,
-        });
-
+        if (event.participants.includes(userId)) {
+            // user eger eventta varsa cikar
+            console.log('cikacriclack  olanuser id ', userId);
+        } else {
+            // console.log('eklenedeck olanuser id ', userId);
+            event.participants.push(userId);
+        }
+        const updatedEvent =await event.save();
+        // console.log(updatedEvent);
+        if(!updatedEvent) {
+            throw new Error("Event could not be updated");
+        }
         res.status(202).send({
             error: false,
-            result,
+            result: updatedEvent,
         });
-    },
+ },
 
-    deletee: async (req, res) => {
-        const result = await Event.deleteOne({ _id: req.params.id });
-
-        res.status(result.deletedCount ? 204 : 404).send({
-            error: !result.deletedCount,
-            message: "Event is not found or already deleted",
-        });
-    },
 };
