@@ -14,7 +14,8 @@ import {
   Divider,
   Paper,
   Grid,
-  Fade
+  Fade,
+  CircularProgress
 } from '@mui/material';
 import {
   ArrowBack,
@@ -22,7 +23,9 @@ import {
   People,
   Share,
   CalendarToday,
-  Person
+  Person,
+  PersonAdd,
+  PersonRemove
 } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -56,17 +59,20 @@ const communityColors = {
 export default function CardDetails() {
   //const {id:eventId}= useParams();
   const { _id } = useParams();
-   const { getEventData } = useEventCall();
-    const { events} = useSelector((state) => state.event );
+  const { getEventData } = useEventCall();
+  const { events } = useSelector((state) => state.event);
+  const { user, token } = useSelector((state) => state.auth); // Mevcut kullanıcı bilgisi
   const navigate = useNavigate();
+  
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isJoining, setIsJoining] = useState(false); // Katılma işlemi için loading
 
   //const event = useSelector((state) => state.event.eventDetails);
   const eventDetail = events.find(a => a._id === _id);
 
-   console.log(_id);
-   console.log(event);
+  console.log(_id);
+  console.log(event);
   useEffect(() => {
     // Sayfa yüklendiğinde loading'i kapat
     const timer = setTimeout(() => {
@@ -76,14 +82,77 @@ export default function CardDetails() {
     return () => clearTimeout(timer);
   }, []);
 
-       useEffect(() => {
-    getEventData("events");
-    // eventDetail geldiğinde loading'i kapat
-    if (eventDetail) setIsLoading(false);
-  }, [getEventData, eventDetail]);
+  //      useEffect(() => {
+  //   getEventData("events");
+  //   // eventDetail geldiğinde loading'i kapat
+  //   if (eventDetail) setIsLoading(false);
+  // }, [getEventData, eventDetail]);
 
-  
-     
+  useEffect(() => {
+    if (events.length === 0) {
+      getEventData("events");
+    }
+  }, []); // Sadece component mount'ta çalışır
+
+  useEffect(() => {
+    if (eventDetail) {
+      setIsLoading(false);
+    }
+  }, [eventDetail]);
+
+  // Kullanıcının etkinliğe katılıp katılmadığını kontrol et
+  const isUserParticipant = eventDetail?.participants?.some(participant => {
+    const participantId = typeof participant === 'object' ? participant._id : participant;
+    return participantId === user?._id;
+  });
+
+  // Etkinliğe katılma/ayrılma işlevi
+ const handleJoinEvent = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    const handleJoinEvent = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setIsJoining(true);
+    try {
+      // Direkt axios kullanarak API çağrısı
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events/join/${_id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}` // Token formatını kontrol edin
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('API çağrısı başarısız');
+      }
+
+      const data = await response.json();
+      console.log('Join event response:', data);
+      
+      // Events listesini yeniden getir
+      await getEventData("events");
+      
+      // Başarı mesajı
+      console.log('İşlem başarıyla tamamlandı!');
+      
+    } catch (error) {
+      console.error('Katılma işlemi hatası:', error);
+      console.log('İşlem başarısız!');
+    } finally {
+      setIsJoining(false);
+    }
+  };
+ }
+
+
   // Eğer event verisi yoksa ana sayfaya yönlendir
   if (!eventDetail) {
     return (
@@ -104,16 +173,17 @@ export default function CardDetails() {
     );
   }
 
-const {
-  title,
-  image,
-  community,
-  description,
-  date,
-  organizer,
-  guestCount = 0,
-  avatarGroup = [],
-} = eventDetail
+  const {
+    title="",
+    image="",
+    community="",
+    description="",
+    location="",
+    date=null,
+    creater=null,
+    participants = [],
+    avatarGroup = [],
+  } = eventDetail || {};
 
 
   const formatDate = (dateValue) => {
@@ -136,7 +206,7 @@ const {
 
   const communityInfo = getCommunityInfo(community);
 
- 
+
 
   const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
 
@@ -194,7 +264,7 @@ const {
             <CardMedia
               component="img"
               height="400"
-             //{events[0].image}
+              //{events[0].image}
               alt={`${title} görseli`}
               sx={{ objectFit: 'cover' }}
             />
@@ -210,7 +280,10 @@ const {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     <Person sx={{ color: 'primary.main' }} />
                     <Typography variant="subtitle1" color="text.secondary">
-                      Organizatör: <strong>{organizer}</strong>
+                      Organizatör: <strong>{typeof creater === 'object'
+                        ? (creater?.username || creater?.email || 'Belirtilmedi')
+                        : (creater || 'Belirtilmedi')
+                      }</strong>
                     </Typography>
                   </Box>
 
@@ -226,12 +299,29 @@ const {
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Button
-                    variant="contained"
+                    variant={isUserParticipant ? "outlined" : "contained"}
+                    color={isUserParticipant ? "error" : "primary"}
                     fullWidth
                     size="large"
+                    onClick={handleJoinEvent}
+                    disabled={isJoining}
+                    startIcon={
+                      isJoining ? (
+                        <CircularProgress size={20} />
+                      ) : isUserParticipant ? (
+                        <PersonRemove />
+                      ) : (
+                        <PersonAdd />
+                      )
+                    }
                     sx={{ py: 1.5, fontWeight: 'bold' }}
                   >
-                    Etkinliğe Katıl
+                    {isJoining
+                      ? 'İşlem yapılıyor...'
+                      : isUserParticipant
+                        ? 'Etkinlikten Ayrıl'
+                        : 'Etkinliğe Katıl'
+                    }
                   </Button>
                   <Button
                     variant="outlined"
@@ -260,7 +350,7 @@ const {
 
                   {/* Date and Time */}
                   <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h7" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                       🗓️ Tarih ve Saat
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -271,26 +361,26 @@ const {
 
                   {/* Location */}
                   <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h7" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                       📍 Konum
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
                       <LocationOn sx={{ color: 'primary.main', mt: 0.5 }} />
-                      <Typography variant="body1">{eventDetail.location}</Typography>
+                      <Typography variant="body1">{location || 'Konum belirtilmedi'}</Typography>
                     </Box>
 
-                    
+
                   </Paper>
 
                   {/* Participants */}
                   <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h7" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                       👥 Katılımcılar
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                       <People sx={{ color: 'primary.main' }} />
                       <Typography variant="body1">
-                        Toplam Katılımcı: <strong>{guestCount}</strong>
+                        Toplam Katılımcı: <strong>{participants.length}</strong>
                       </Typography>
                     </Box>
 
@@ -300,16 +390,27 @@ const {
                           Katılan Kişiler ({avatarGroup.length}):
                         </Typography>
                         <AvatarGroup max={8}>
-                          {avatarGroup.map((participant, index) => (
-                            <Avatar
-                              key={index}
-                              alt={participant.name || `Katılımcı ${index + 1}`}
-                              src={participant.avatar}
-                              sx={{ width: 40, height: 40 }}
-                            >
-                              {participant.name ? participant.name[0].toUpperCase() : index + 1}
-                            </Avatar>
-                          ))}
+                          {participants.map((participant, index) => {
+                            // participant bir object mi string mi kontrol et
+                            const participantData = typeof participant === 'object' ? participant : null;
+                            const participantName = participantData 
+                              ? `${participantData.firstName || ''} ${participantData.lastName || ''}`.trim()
+                              : `Katılımcı ${index + 1}`;
+                            
+                            // Eğer participantName boşsa, default bir isim ver
+                            const displayName = participantName || `Katılımcı ${index + 1}`;
+                            
+                            return (
+                              <Avatar
+                                key={participantData?._id || `participant-${index}`}
+                                alt={displayName}
+                                src={participantData?.avatar || participantData?.image}
+                                sx={{ width: 40, height: 40 }}
+                              >
+                                {displayName[0]?.toUpperCase() || (index + 1)}
+                              </Avatar>
+                            );
+                          })}
                         </AvatarGroup>
                       </Box>
                     )}
@@ -317,7 +418,7 @@ const {
                 </Grid>
               </Grid>
 
-             
+
             </CardContent>
           </Card>
         </Box>
