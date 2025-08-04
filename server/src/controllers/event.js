@@ -22,7 +22,7 @@ module.exports = {
                     </ul>`
         */
 
-    const result = await res.getModelList(Event, {}, ["creater", "categoryId"]);
+    const result = await res.getModelList(Event, {}, ["creater", "categoryId", "participants"]);
 
     res.status(200).send({
       error: false,
@@ -120,8 +120,8 @@ module.exports = {
         */
 
     const result = await Event.findOne({ _id: req.params.id }).populate([
-      { path: "creater", select: "username email" },
-      { path: "participants", select: "firstName lastName email" },
+      { path: "creater", select: "username email image" },
+      { path: "participants", select: "firstName lastName email image" },
       { path: "sharedGroup", select: "title location" },
       { path: "categoryId", select: "name" },
     ]);
@@ -155,20 +155,20 @@ module.exports = {
     let updateData = { ...req.body };
 
     if (req.file) {
-        updateData.image = '/upload/' + req.file.filename;
+      updateData.image = '/upload/' + req.file.filename;
     } else if (req.body.image) {
-        updateData.image = req.body.image; // URL string desteği
+      updateData.image = req.body.image; // URL string desteği
     }
 
     const result = await Event.updateOne(
-        { _id: req.params.id },
-        updateData,
-        { new: true, runValidators: true }
+      { _id: req.params.id },
+      updateData,
+      { new: true, runValidators: true }
     );
 
     res.status(202).send({
-        error: false,
-        result,
+      error: false,
+      result,
     });
   },
 
@@ -182,45 +182,56 @@ module.exports = {
   },
 
   joinEvent: async (req, res) => {
-        /*
-            #swagger.tags=["Events"]
-            #swagger.summary="Update Events"
-            #swagger.parameters['body']={
-                in:"body",
-                require:true,
-                schema:{
-                  $ref:'#/definitions/Event',
-                }
+    /*
+        #swagger.tags=["Events"]
+        #swagger.summary="Update Events"
+        #swagger.parameters['body']={
+            in:"body",
+            require:true,
+            schema:{
+              $ref:'#/definitions/Event',
             }
-            #swagger.parameters['image']={
-                in:"formData",
-                type:"file",
-                required:false,
-                name:"image"
-            }
-        */
-        const userId = req.user._id;
-        const eventId = req.params.eventId;
-        const event = await Event.findOne({ _id: eventId });
-        if (!event) {
-            throw new Error("Event not found");
         }
-        if (event.participants.includes(userId)) {
-            // user eger eventta varsa cikar
-            console.log('cikacriclack  olanuser id ', userId);
-        } else {
-            // console.log('eklenedeck olanuser id ', userId);
-            event.participants.push(userId);
+        #swagger.parameters['image']={
+            in:"formData",
+            type:"file",
+            required:false,
+            name:"image"
         }
-        const updatedEvent =await event.save();
-        // console.log(updatedEvent);
-        if(!updatedEvent) {
-            throw new Error("Event could not be updated");
-        }
-        res.status(202).send({
-            error: false,
-            result: updatedEvent,
-        });
- },
+    */
+    const userId = req.user._id;
+    const eventId = req.params.eventId;
+    const event = await Event.findOne({ _id: eventId });
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    if (event.participants.includes(userId)) {
+      // user eger eventta varsa cikar
+      event.participants = event.participants.filter(participant => participant.toString() !== userId.toString());
+      console.log('cikacriclack  olanuser id ', userId);
+    } else {
+      // console.log('eklenedeck olanuser id ', userId);
+      event.participants.push(userId);
+    }
+    const updatedEvent = await event.save();
+    // console.log(updatedEvent);
+
+
+    if (!updatedEvent) {
+      throw new Error("Event could not be updated");
+    }
+
+
+    const result = await Event.findOne({ _id: eventId }).populate([
+      { path: "creater", select: "username email image" },
+      { path: "participants", select: "firstName lastName email image" },
+      { path: "sharedGroup", select: "title location" },
+      { path: "categoryId", select: "name" },
+    ]);
+    res.status(202).send({
+      error: false,
+      result,
+    });
+  },
 
 };

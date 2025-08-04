@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+//import { joinEvent } from "../../../../../server/src/controllers/event";
 const eventSlice = createSlice({
     name: "event",
     initialState: {
@@ -48,9 +49,12 @@ const eventSlice = createSlice({
             state.event = payload
             state.error = false;
         },
-      
-     },
-  
+        joinEventSuccess: (state, { payload }) => {
+  const alreadyExists = state.event.participants.some(p => p._id === payload._id);
+  if (!alreadyExists) {
+    state.event.participants.push(payload);
+  }}
+    }
 
 });
 export const {
@@ -60,5 +64,6 @@ export const {
     eventSuccess,
     getEventCategoryGroupSuccess,
     getChatsSuccess,
+    joinEventSuccess
 } = eventSlice.actions;
 export default eventSlice.reducer;
