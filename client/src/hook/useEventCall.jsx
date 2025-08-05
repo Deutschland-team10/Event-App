@@ -108,18 +108,18 @@ const useEventCall = () => {
   };
 
   const joinEvent = async (eventId) => {
-  dispatch(fetchStart());
-  try {
-    const { data } = await axiosWithToken.put(`events/join/${eventId}`);
-    // dispatch(joinEventSuccess(data)); // gelen kullanıcı bilgisi
-    console.log('line 112', data);
-    dispatch(setEvent(data.result))
-    toastSuccessNotify("Sie haben Aktivität an der teilgenommen!");
-  } catch (error) {
-    dispatch(fetchFail());
-    toastErrorNotify("Fehler.");
-  }
-};
+    dispatch(fetchStart());
+    try {
+      const { data } = await axiosWithToken.put(`events/join/${eventId}`);
+      // dispatch(joinEventSuccess(data)); // gelen kullanıcı bilgisi
+      console.log('line 112', data);
+      dispatch(setEvent(data.result))
+      toastSuccessNotify("Sie haben Aktivität an der teilgenommen!");
+    } catch (error) {
+      dispatch(fetchFail());
+      toastErrorNotify("Fehler.");
+    }
+  };
 
 
   const updateEventFormData = async (url, info) => {
@@ -150,7 +150,7 @@ const useEventCall = () => {
   const getMessage = async (chatId) => {
     dispatch(fetchStart());
     try {
-      const { data } = await axiosWithToken.get('/chats/messages/'+chatId);
+      const { data } = await axiosWithToken.get('/chats/messages/' + chatId);
       dispatch(getMessagesSuccess(data)); // direkt data gönder
     } catch (error) {
       dispatch(fetchFail());
@@ -158,11 +158,11 @@ const useEventCall = () => {
     }
   };
 
-  const postMessage = async ( info) => {
+  const postMessage = async (info) => {
     dispatch(fetchStart());
     try {
       const { data } = await axiosWithToken.post('/chats/messages/', info);
-      dispatch(addMessage(data.result)); 
+      dispatch(addMessage(data.result));
     } catch (error) {
       dispatch(fetchFail());
       console.error(error);
