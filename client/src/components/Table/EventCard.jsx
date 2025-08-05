@@ -62,7 +62,7 @@ export default function EventCard({
     image,
     avatarGroup,
   } = event;
-  
+
   const [expanded, setExpanded] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -148,7 +148,7 @@ export default function EventCard({
 
   const handleCardClick = (event) => {
     console.log("Card clicked:", event);
-    dispatch(setEvent(event))
+    dispatch(setEvent(event));
     navigate("/home/details/" + event._id);
   };
 
@@ -308,14 +308,16 @@ export default function EventCard({
           bottom: 0,
         }}
       >
-        <IconButton aria-label="add to favorites">
+        <IconButton
+          onClick={() => {
+            getDeleteData("events", _id);
+            navigate("/home");
+          }}
+          aria-label="add to favorites"
+        >
           <DeleteOutlineIcon
             sx={{
               "&:hover": { color: "red" },
-            }}
-            onClick={() => {
-              getDeleteData("events", _id);
-              navigate("/home");
             }}
           />
         </IconButton>
@@ -331,14 +333,6 @@ export default function EventCard({
         >
           <EditIcon sx={{ "&:hover": { color: "red" } }} />
         </IconButton>
-        {/* <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore> */}
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>

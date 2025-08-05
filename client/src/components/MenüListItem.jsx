@@ -17,6 +17,10 @@ const links = [
     url: "/home/about"
   },
   {
+    title: "Group",
+    url: "/home/group"
+  },
+  {
     title: "Create Event",
     url: "/home/create-event",
   }
