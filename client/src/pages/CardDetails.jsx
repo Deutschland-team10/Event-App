@@ -78,13 +78,59 @@ export default function CardDetails() {
     setIsJoining(false);
   };
 
-  const handleShareClick = () => {
+  const handleShareClick = async () => {
+    const shareData = {
+      title: event?.title || 'Etkinlik',
+      text: `${event?.title} - ${event?.description?.substring(0, 100)}...`,
+      url: window.location.href,
+    };
 
+    try {
+      // Modern tarayıcılarda Web Share API
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        console.log('Başarıyla paylaşıldı');
+      } 
+      // Clipboard API (ikinci seçenek)
+      else if (navigator.clipboard) {
+        const shareText = `${event?.title}\n\n${event?.description}\n\nKonum: ${event?.location}\nTarih: ${event?.date ? new Date(event.date).toLocaleDateString('tr-TR') : '—'}\n\nDetaylar: ${window.location.href}`;
+        
+        await navigator.clipboard.writeText(shareText);
+        alert('Etkinlik bilgileri panoya kopyalandı!');
+        console.log('Panoya kopyalandı');
+      } 
+      // Fallback - eski tarayıcılar için
+      else {
+        const shareText = `${event?.title}\n\n${event?.description}\n\nKonum: ${event?.location}\nTarih: ${event?.date ? new Date(event.date).toLocaleDateString('tr-TR') : '—'}\n\nDetaylar: ${window.location.href}`;
+        
+        
+        try {
+          document.execCommand('copy');
+          alert('Etkinlik bilgileri panoya kopyalandı!');
+          console.log('Fallback ile kopyalandı');
+        } catch (err) {
+          console.error('Kopyalama başarısız:', err);
+          alert('Paylaşım başarısız oldu');
+        }
+        
+        document.body.removeChild(textArea);
+      }
+    } catch (error) {
+      console.error('Paylaşım hatası:', error);
+      
+      // Hata durumunda manual paylaşım seçenekleri göster
+      const shareUrl = window.location.href;
+      const shareText = encodeURIComponent(`${event?.title} - ${event?.description}`);
+      
+      const shareOptions = [
+        `WhatsApp: https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}`,
+        `Telegram: https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareText}`,
+        `Twitter: https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(shareUrl)}`,
+        `Facebook: https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+      ];
+      
+    }
   };
-
-
-
-
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -148,9 +194,15 @@ export default function CardDetails() {
               onClick={handleShareClick}
               startIcon={<Share />}
               sx={{
-                py: 1.5,
-                px: 2,
-                cursor: 'pointer'
+                 py: 1.5, 
+                    px: 2,
+                    cursor: 'pointer',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      transform: 'scale(1.02)',
+                    },
+                    transition: 'all 0.2s ease-in-out'
               }}
             >
               Teilen

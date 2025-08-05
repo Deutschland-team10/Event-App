@@ -114,10 +114,10 @@ const useEventCall = () => {
     // dispatch(joinEventSuccess(data)); // gelen kullanıcı bilgisi
     console.log('line 112', data);
     dispatch(setEvent(data.result))
-    toastSuccessNotify("Etkinliğe başarıyla katıldınız!");
+    toastSuccessNotify("Sie haben Aktivität an der teilgenommen!");
   } catch (error) {
     dispatch(fetchFail());
-    toastErrorNotify("Katılım sırasında hata oluştu.");
+    toastErrorNotify("Fehler.");
   }
 };
 
