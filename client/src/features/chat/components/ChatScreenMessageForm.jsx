@@ -92,8 +92,8 @@ const ChatScreenMessageForm = ({ chatId, socket, chat, users }) => {
                   : "flex-start",
               bgcolor:
                 msg.sender._id === currentUser._id 
-                  ? "primary.light"
-                  : "grey.200",
+                  ? "aliceblue"
+                  : "lightblue",
             }}
           >
             <Box display="flex" alignItems="center" gap={1} mb={1}>

@@ -9,6 +9,7 @@ import PrivateRouter from "./PrivateRouter";
 import CardDetails from "../pages/CardDetails";
 import StartPage from "../pages/StartPage";
 import About from "../pages/About";
+import Group from "../pages/Group"
 import CreateEvent from "../pages/CreateEvent";
 import ChatPage from "../pages/ChatPage";
 import MyEvents from "../pages/myEvents";
@@ -28,6 +29,7 @@ const AppRouter = () => {
             <Route path="profile" element={<Profile />} />
             <Route path="my-events" element={<MyEvents />} />
             <Route path="about" element={<About />} />
+            <Route path="group" element={<Group />} />
             <Route path="chat-page" element={<ChatPage />} />
             <Route path="profile/edit" element={<ProfileForm />} />
           </Route>
