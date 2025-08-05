@@ -32,6 +32,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import useEventCall from "../../hook/useEventCall";
 import { useSelector, useDispatch } from "react-redux";
+import { setEvent } from "../../features/chat/hooks/eventSlice";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -147,7 +148,7 @@ export default function EventCard({
 
   const handleCardClick = (event) => {
     console.log("Card clicked:", event);
-    //dispatch(setEvent(event))
+    dispatch(setEvent(event))
     navigate("/home/details/" + event._id);
   };
 

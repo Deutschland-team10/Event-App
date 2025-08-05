@@ -1,4 +1,3 @@
-// eventSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const eventSlice = createSlice({
@@ -18,6 +17,7 @@ const eventSlice = createSlice({
       image: "",
       location: "",
     },
+
     groups: [],
     chats: [],
     categories: [],
@@ -61,18 +61,30 @@ const eventSlice = createSlice({
       // ✅ yeni mesaj eklemek için
       state.messages.push(payload);
     },
+    joinEventSuccess: (state, { payload }) => {
+      const alreadyExists = state.event.participants.some(p => p._id === payload._id);
+      if (!alreadyExists) {
+       state.event.participants.push(payload);
+      }
+    }
+    
+    
   },
+
 });
 
 export const {
+
   fetchFail,
   fetchStart,
   setEvent,
   eventSuccess,
   getEventCategoryGroupSuccess,
   getChatsSuccess,
+  joinEventSuccess,
   addMessage,
   getMessagesSuccess,
+
 } = eventSlice.actions;
 
 export default eventSlice.reducer;

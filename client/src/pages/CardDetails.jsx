@@ -30,7 +30,8 @@ import {
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import useEventCall from '../hook/useEventCall';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEvent } from "../features/chat/hooks/eventSlice";
 
 // Leaflet icon düzeltmesi
 delete L.Icon.Default.prototype._getIconUrl;
@@ -59,370 +60,159 @@ const communityColors = {
 export default function CardDetails() {
   //const {id:eventId}= useParams();
   const { _id } = useParams();
-  const { getEventData } = useEventCall();
-  const { events } = useSelector((state) => state.event);
-  const { user, token } = useSelector((state) => state.auth); // Mevcut kullanıcı bilgisi
-  const navigate = useNavigate();
-  
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isJoining, setIsJoining] = useState(false); // Katılma işlemi için loading
+  const dispatch = useDispatch();
+  const { getEventData, joinEvent } = useEventCall();
+  const { events, event } = useSelector((state) => state.event);
+  const { currentUser, token } = useSelector((state) => state.auth);
+  const [isJoining, setIsJoining] = useState(false);
 
-  //const event = useSelector((state) => state.event.eventDetails);
-  const eventDetail = events.find(a => a._id === _id);
+  const currentUserId = currentUser?._id
 
-  console.log(_id);
-  console.log(event);
-  useEffect(() => {
-    // Sayfa yüklendiğinde loading'i kapat
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+  const isUserParticipant = event?.participants?.some(participant => { return participant._id === currentUserId; })
 
-    return () => clearTimeout(timer);
-  }, []);
 
-  //      useEffect(() => {
-  //   getEventData("events");
-  //   // eventDetail geldiğinde loading'i kapat
-  //   if (eventDetail) setIsLoading(false);
-  // }, [getEventData, eventDetail]);
-
-  useEffect(() => {
-    if (events.length === 0) {
-      getEventData("events");
-    }
-  }, []); // Sadece component mount'ta çalışır
-
-  useEffect(() => {
-    if (eventDetail) {
-      setIsLoading(false);
-    }
-  }, [eventDetail]);
-
-  // Kullanıcının etkinliğe katılıp katılmadığını kontrol et
-  const isUserParticipant = eventDetail?.participants?.some(participant => {
-    const participantId = typeof participant === 'object' ? participant._id : participant;
-    return participantId === user?._id;
-  });
-
-  // Etkinliğe katılma/ayrılma işlevi
- const handleJoinEvent = async () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    const handleJoinEvent = async () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
+  // join handler
+  const handleJoin = () => {
     setIsJoining(true);
-    try {
-      // Direkt axios kullanarak API çağrısı
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events/join/${_id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}` // Token formatını kontrol edin
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('API çağrısı başarısız');
-      }
-
-      const data = await response.json();
-      console.log('Join event response:', data);
-      
-      // Events listesini yeniden getir
-      await getEventData("events");
-      
-      // Başarı mesajı
-      console.log('İşlem başarıyla tamamlandı!');
-      
-    } catch (error) {
-      console.error('Katılma işlemi hatası:', error);
-      console.log('İşlem başarısız!');
-    } finally {
-      setIsJoining(false);
-    }
-  };
- }
-
-
-  // Eğer event verisi yoksa ana sayfaya yönlendir
-  if (!eventDetail) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="error" gutterBottom>
-            Etkinlik bulunamadı
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => navigate('/')}
-            sx={{ mt: 2 }}
-          >
-            Ana Sayfaya Dön
-          </Button>
-        </Paper>
-      </Container>
-    );
-  }
-
-  const {
-    title="",
-    image="",
-    community="",
-    description="",
-    location="",
-    date=null,
-    creater=null,
-    participants = [],
-    avatarGroup = [],
-  } = eventDetail || {};
-
-
-  const formatDate = (dateValue) => {
-    if (!dateValue) return "Tarih belirtilmedi";
-    const dateObj = new Date(dateValue);
-    if (isNaN(dateObj.getTime())) return "Geçersiz tarih";
-    return dateObj.toLocaleDateString('tr-TR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getCommunityInfo = (val) => ({
-    label: communityLabels[val] || val || "Belirtilmedi",
-    color: communityColors[val] || '#757575'
-  });
-
-  const communityInfo = getCommunityInfo(community);
-
-
-
-  const eventImage = image || `https://source.unsplash.com/800x400/?event,${community || 'conference'}`;
-
-  const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited);
+    joinEvent(_id)
+    setIsJoining(false);
   };
 
   const handleShareClick = () => {
-    if (navigator.share) {
-      navigator.share({
-        title,
-        text: description,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(`${title} - ${window.location.href}`);
-      // Burada bir toast bildirimi gösterebiliriz
-    }
+
   };
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
 
-  if (isLoading) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-          <Typography variant="h6" color="text.secondary">
-            Yükleniyor...
-          </Typography>
-        </Box>
-      </Container>
-    );
-  }
+
+
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Fade in={!isLoading}>
-        <Box>
-          {/* Header Navigation */}
-          <Box sx={{ mb: 3 }}>
+      <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
+        {/* Event Image */}
+        <CardMedia
+          component="img"
+          height="300"
+          image={event?.image || "https://via.placeholder.com/400x200"}
+        //alt={event?.title}
+        />
+        {/* Event Content */}
+        <CardContent>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+            <Typography gutterBottom variant="h5" component="div">
+              {event?.title}
+            </Typography>
+
+            {/* Join Button */}
+            {/* Dinamik Join/Leave Button */}
             <Button
-              startIcon={<ArrowBack />}
-              onClick={handleBackClick}
-              sx={{ mb: 2 }}
+              variant={isUserParticipant ? "outlined" : "contained"}
+              color={isUserParticipant ? "error" : "primary"}
+              size="large"
+              onClick={() => handleJoin(event._id)}
+              disabled={isJoining}
+              startIcon={
+                isJoining ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : isUserParticipant ? (
+                  <PersonRemove />
+                ) : (
+                  <PersonAdd />
+                )
+              }
+              sx={{
+                py: 1.5,
+                px: 3,
+                fontWeight: 'bold',
+                minWidth: 200,
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                },
+                '&:disabled': {
+                  opacity: 0.7,
+                }
+              }}
             >
-              Geri Dön
+              {isJoining
+                ? 'İşlem yapılıyor...'
+                : isUserParticipant
+                  ? 'Etkinlikten Ayrıl'
+                  : 'Aktivität Teilnehmen'
+              }
+            </Button>
+
+            {/* Share Button */}
+            <Button
+              variant="outlined"
+              onClick={handleShareClick}
+              startIcon={<Share />}
+              sx={{
+                py: 1.5,
+                px: 2,
+                cursor: 'pointer'
+              }}
+            >
+              Teilen
             </Button>
           </Box>
 
-          {/* Main Content */}
-          <Card sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: 3 }}>
-            {/* Hero Image */}
-            <CardMedia
-              component="img"
-              height="400"
-              //{events[0].image}
-              alt={`${title} görseli`}
-              sx={{ objectFit: 'cover' }}
-            />
 
-            <CardContent sx={{ p: 2 }}>
-              {/* Title and Actions */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                    {eventDetail.title}
-                  </Typography>
+          <Chip
+            label={event?.categoryId.name}
+            sx={{
+              backgroundColor: communityColors[event?.community] || '#2196f3',
+              color: 'white',
+              mb: 2
+            }}
+          />
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Person sx={{ color: 'primary.main' }} />
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Organizatör: <strong>{typeof creater === 'object'
-                        ? (creater?.username || creater?.email || 'Belirtilmedi')
-                        : (creater || 'Belirtilmedi')
-                      }</strong>
-                    </Typography>
-                  </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <Person sx={{ color: 'primary.main' }} />
+            <Typography variant="subtitle1" color="text.secondary">
+              Organizatör: <strong>
+                {typeof event?.creater === 'object'
+                  ? (event?.creater?.username || event?.creater?.email || 'Belirtilmedi')
+                  : (event?.creater || 'Belirtilmedi')}
+              </strong>
+            </Typography>
+          </Box>
 
-                  <Chip
-                    label={communityInfo.label}
-                    sx={{
-                      backgroundColor: communityInfo.color,
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '0.875rem'
-                    }}
-                  />
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Button
-                    variant={isUserParticipant ? "outlined" : "contained"}
-                    color={isUserParticipant ? "error" : "primary"}
-                    fullWidth
-                    size="large"
-                    onClick={handleJoinEvent}
-                    disabled={isJoining}
-                    startIcon={
-                      isJoining ? (
-                        <CircularProgress size={20} />
-                      ) : isUserParticipant ? (
-                        <PersonRemove />
-                      ) : (
-                        <PersonAdd />
-                      )
-                    }
-                    sx={{ py: 1.5, fontWeight: 'bold' }}
-                  >
-                    {isJoining
-                      ? 'İşlem yapılıyor...'
-                      : isUserParticipant
-                        ? 'Etkinlikten Ayrıl'
-                        : 'Etkinliğe Katıl'
-                    }
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    onClick={handleShareClick}
-                    startIcon={<Share />}
-                  >
-                    Paylaş
-                  </Button>
-                </Box>
-              </Box>
+          <Typography variant="body2" color="text.secondary" mb={2}>
+            {event?.description}
+          </Typography>
 
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
+            <LocationOn sx={{ color: 'primary.main', mt: 0.5 }} />
+            <Typography variant="body1">{event?.location}</Typography>
+          </Box>
 
-              <Divider sx={{ my: 3 }} />
+          {/* Date and Info */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <CalendarToday sx={{ color: 'primary.main' }} />
+            <Typography variant="body1" color="text.secondary">
+              Datum: {event?.date ? new Date(event.date).toLocaleDateString('tr-TR') : '—'}
+              {event?.time && ` - ${event.time}`}
+            </Typography>
+          </Box>
 
-              {/* Event Details Grid */}
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={8}>
-                  {/* Description */}
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-                    📝 Etkinlik Açıklaması
-                  </Typography>
-                  <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, mb: 4 }}>
-                    {eventDetail.description}
-                  </Typography>
+          {/* Participants */}
+          <Box display="flex" justifyContent="space-between" alignItems="center" mt={3}>
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <People sx={{ color: 'primary.main' }} />
+              Teilnehmer ({event?.participants.length})
+            </Typography>
 
-                  {/* Date and Time */}
-                  <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-                      🗓️ Tarih ve Saat
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <CalendarToday sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1">{formatDate(date)}</Typography>
-                    </Box>
-                  </Paper>
+            <AvatarGroup max={4}>
+              {event?.participants?.map((user) => (
+                <Avatar key={user._id} alt={user.username} src={user.image} />
+              ))}
+            </AvatarGroup>
+          </Box>
+        </CardContent>
 
-                  {/* Location */}
-                  <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-                      📍 Konum
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-                      <LocationOn sx={{ color: 'primary.main', mt: 0.5 }} />
-                      <Typography variant="body1">{location || 'Konum belirtilmedi'}</Typography>
-                    </Box>
-
-
-                  </Paper>
-
-                  {/* Participants */}
-                  <Paper sx={{ p: 1.5, mb: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-                      👥 Katılımcılar
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                      <People sx={{ color: 'primary.main' }} />
-                      <Typography variant="body1">
-                        Toplam Katılımcı: <strong>{participants.length}</strong>
-                      </Typography>
-                    </Box>
-
-                    {avatarGroup.length > 0 && (
-                      <Box sx={{ mt: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                          Katılan Kişiler ({avatarGroup.length}):
-                        </Typography>
-                        <AvatarGroup max={8}>
-                          {participants.map((participant, index) => {
-                            // participant bir object mi string mi kontrol et
-                            const participantData = typeof participant === 'object' ? participant : null;
-                            const participantName = participantData 
-                              ? `${participantData.firstName || ''} ${participantData.lastName || ''}`.trim()
-                              : `Katılımcı ${index + 1}`;
-                            
-                            // Eğer participantName boşsa, default bir isim ver
-                            const displayName = participantName || `Katılımcı ${index + 1}`;
-                            
-                            return (
-                              <Avatar
-                                key={participantData?._id || `participant-${index}`}
-                                alt={displayName}
-                                src={participantData?.avatar || participantData?.image}
-                                sx={{ width: 40, height: 40 }}
-                              >
-                                {displayName[0]?.toUpperCase() || (index + 1)}
-                              </Avatar>
-                            );
-                          })}
-                        </AvatarGroup>
-                      </Box>
-                    )}
-                  </Paper>
-                </Grid>
-              </Grid>
-
-
-            </CardContent>
-          </Card>
-        </Box>
-      </Fade>
+        <Divider />
+      </Card>
     </Container>
   );
-}
+};

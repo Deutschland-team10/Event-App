@@ -8,6 +8,8 @@ import {
   getChatsSuccess,
   addMessage,
   getMessagesSuccess,
+  joinEventSuccess,
+
 } from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -35,7 +37,7 @@ const useEventCall = () => {
     dispatch(fetchStart());
     try {
       const { data } = await axiosWithToken.get(finallUrl);
-      console.log(data);
+      // console.log(data);
       dispatch(eventSuccess({ data, url }));
     } catch (error) {
       dispatch(fetchFail());
@@ -98,6 +100,7 @@ const useEventCall = () => {
     try {
       const { data } = await axiosWithToken.put(`${url}/${info._id}`, info);
       getEventData(url);
+      console.log('line 100', data);
       toastSuccessNotify(`${url} is updated successfully!`);
     } catch (error) {
       dispatch(fetchFail());
@@ -105,18 +108,19 @@ const useEventCall = () => {
   };
 
   const joinEvent = async (eventId) => {
-    dispatch(fetchStart());
-    try {
-      const { data } = await axiosWithToken.patch(`events/join/${eventId}`);
-      console.log("Join event response:", data);
-      // Etkinlik verilerini yeniden getir
-      await getEventData("events");
-      toastSuccessNotify("İşlem başarıyla tamamlandı!");
-      return data;
-    } catch (error) {
-      dispatch(fetchFail());
-    }
-  };
+  dispatch(fetchStart());
+  try {
+    const { data } = await axiosWithToken.put(`events/join/${eventId}`);
+    // dispatch(joinEventSuccess(data)); // gelen kullanıcı bilgisi
+    console.log('line 112', data);
+    dispatch(setEvent(data.result))
+    toastSuccessNotify("Etkinliğe başarıyla katıldınız!");
+  } catch (error) {
+    dispatch(fetchFail());
+    toastErrorNotify("Katılım sırasında hata oluştu.");
+  }
+};
+
 
   const updateEventFormData = async (url, info) => {
     dispatch(fetchStart());
@@ -196,6 +200,8 @@ const useEventCall = () => {
     joinEvent,
     postMessage,
     getUserChats,
+
   };
 };
 export default useEventCall;
+
