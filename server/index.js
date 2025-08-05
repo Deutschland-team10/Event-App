@@ -18,32 +18,31 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+  console.log(`New client connected: ${socket.id}`);
 
-    // console.log(`New client connected: ${socket.id}`);
+  // Odaya katılma
+  socket.on("room", (chatId) => {
+    socket.join(chatId);  
+    console.log(`User ${socket.id} joined room ${chatId}`);
+  });
 
-    socket.on("room", (data) => {
-        socket.join(data);  
-    });
+  // Mesaj gönderme
+  socket.on("message", (data) => {
+    console.log("Incoming message:", data);
 
-    socket.on('message', (data) => {
-        console.log(data,"dataaa");
-        socket.to(data.room).emit('messageReturn', data)
+    
 
-    })
+    // chatId üzerinden ilgili odaya gönder
+    io.to(data.chatId).emit("messageReturn", data);
+
+  });
+
+  // Bağlantı koptuğunda
+  socket.on("disconnect", () => {
+    console.log(`Client disconnected: ${socket.id}`);
+  });
 });    
 
-// const corsOptions = {
-//   origin: CLIENT_URL,
-//   methods: ["GET", "POST", "PUT", "PATCH", "HEAD", "DELETE", "OPTIONS"],
-//   allowedHeaders: [
-//     "Origin",
-//     "Content-Type",
-//     "Authorization",
-//     "Accept-Language",
-//   ],
-//   credentials: true,
-// };
-// app.use(cors(corsOptions));
 
 /* ------------------------------------------------------- */
 // Required Modules:

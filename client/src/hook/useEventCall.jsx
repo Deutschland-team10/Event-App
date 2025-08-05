@@ -6,6 +6,8 @@ import {
   eventSuccess,
   getEventCategoryGroupSuccess,
   getChatsSuccess,
+  addMessage,
+  getMessagesSuccess,
 } from "../features/chat/hooks/eventSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -103,18 +105,18 @@ const useEventCall = () => {
   };
 
   const joinEvent = async (eventId) => {
-        dispatch(fetchStart());
-        try {
-            const { data } = await axiosWithToken.patch(`events/join/${eventId}`);
-            console.log('Join event response:', data);
-            // Etkinlik verilerini yeniden getir
-            await getEventData("events");
-           toastSuccessNotify("İşlem başarıyla tamamlandı!");
-        return data;
+    dispatch(fetchStart());
+    try {
+      const { data } = await axiosWithToken.patch(`events/join/${eventId}`);
+      console.log("Join event response:", data);
+      // Etkinlik verilerini yeniden getir
+      await getEventData("events");
+      toastSuccessNotify("İşlem başarıyla tamamlandı!");
+      return data;
     } catch (error) {
-        dispatch(fetchFail());
+      dispatch(fetchFail());
     }
-  }
+  };
 
   const updateEventFormData = async (url, info) => {
     dispatch(fetchStart());
@@ -130,15 +132,39 @@ const useEventCall = () => {
     }
   };
 
-  const getMessage = async (url) => {
+  const getUserChats = async (url) => {
     dispatch(fetchStart());
     try {
-      const { data } = await axiosWithToken.get(`${url}`);
-      dispatch(getChatsSuccess({ data, url }));
+      const { data } = await axiosWithToken.get(url);
+      // console.log("User chats:", data);
+      dispatch(getChatsSuccess(data)); // direkt data gönder
     } catch (error) {
       dispatch(fetchFail());
+      console.error(error);
     }
   };
+  const getMessage = async (chatId) => {
+    dispatch(fetchStart());
+    try {
+      const { data } = await axiosWithToken.get('/chats/messages/'+chatId);
+      dispatch(getMessagesSuccess(data)); // direkt data gönder
+    } catch (error) {
+      dispatch(fetchFail());
+      console.error(error);
+    }
+  };
+
+  const postMessage = async ( info) => {
+    dispatch(fetchStart());
+    try {
+      const { data } = await axiosWithToken.post('/chats/messages/', info);
+      dispatch(addMessage(data.result)); 
+    } catch (error) {
+      dispatch(fetchFail());
+      console.error(error);
+    }
+  };
+
   const getEventCategoryGroup = async () => {
     dispatch(fetchStart());
     try {
@@ -168,6 +194,8 @@ const useEventCall = () => {
     updateEventFormData,
     postEventFormData,
     joinEvent,
+    postMessage,
+    getUserChats,
   };
 };
 export default useEventCall;

@@ -23,8 +23,10 @@ module.exports = {
         */
 
     //const result = await res.getModelList(message);
-  
-    const result = await Chat.find({ users: req.user._id });
+
+    const result = await Chat.find({ users: req.user._id })
+      .populate("users", "username email")
+      .populate("latestMessage");
 
     res.status(200).send({
       error: false,
@@ -45,7 +47,7 @@ module.exports = {
         `
     */
 
-    const result = await Message.find({ chatId: req.params.chatId });
+    const result = await Message.find({ chatId: req.params.chatId }).populate('sender');
 
     res.status(200).send({
       error: false,
@@ -70,7 +72,7 @@ module.exports = {
     // eger ki chatid gönderilmisse bu chat zaten bulunmakta, yeni bir chat olusturma
     // eger ki chatId yok ise yeni bir chat olustur
     const { receiverId, content, chatId } = req.body;
-    console.log(req.user._id, receiverId, content, chatId);
+    console.log(req.body);
 
     let chat = null;
 
@@ -78,14 +80,26 @@ module.exports = {
       chat = await Chat.create({
         users: [req.user._id, receiverId],
       });
-      console.log(chat);
+      // console.log(chat);
     }
 
-    const message = await Message.create({
+    let message = new Message({
       sender: req.user._id,
       chatId: chat ? chat._id : chatId,
       content,
     });
+
+    await message.save();
+    await message.populate("sender");
+
+
+
+
+    const updatedChat =await Chat.findByIdAndUpdate(chat ? chat._id : chatId, {
+      latestMessage: message._id,
+    });
+
+
     res.status(201).send({
       error: false,
       message: "Message sent successfully",
@@ -113,7 +127,7 @@ module.exports = {
             #swagger.summary = "Delete message"
         */
 
-    const result = await Chat.deleteOne({ _id: req.params.id });
+    const result = await Message.deleteOne({ _id: req.params.id });
 
     res.status(result.deletedCount ? 204 : 404).send({
       error: !result.deletedCount,

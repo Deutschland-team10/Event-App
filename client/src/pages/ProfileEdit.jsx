@@ -77,7 +77,7 @@ const ProfileForm = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <Typography variant="h6" className="mb-4 font-bold">
-                            Profili Düzenle
+                            Profil Bearbeiten
                         </Typography>
 
                         <TextField

@@ -42,29 +42,29 @@ const Profile = () => {
               color="warning"
               onClick={() => navigate("/home/profile/edit")}
             >
-              Düzenle
+              EDIT
             </Button>
           </div>
 
           <Grid container spacing={2}>
             <Grid item xs={12} gap={4} marginTop={4}>
               <Typography>
-                <strong>Cinsiyet:</strong> {currentUser.gender}
+                <strong>Geschlecht:</strong> {currentUser.gender}
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                <strong>Doğum Tarihi:</strong> {currentUser.birthDate ? new Date(currentUser.birthDate).toLocaleDateString('tr-TR') : ""}
+                <strong>Geburtsdatum:</strong> {currentUser.birthDate ? new Date(currentUser.birthDate).toLocaleDateString('tr-TR') : ""}
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                <strong>Şehir:</strong> {currentUser.city}
+                <strong>Stadt:</strong> {currentUser.city}
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                <strong>İlgi Alanları:</strong> {currentUser.interests?.join(", ")}
+                <strong>Interesse:</strong> {currentUser.interests?.join(", ")}
               </Typography>
             </Grid>
           </Grid>
