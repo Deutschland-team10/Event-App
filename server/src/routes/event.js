@@ -20,9 +20,9 @@ router.put('/join/:eventId', joinEvent )
 
 router.route('/:id')
     .get(isLogin, read)
-    .put(isLogin, upload.single('image'), update) // Upload middleware eklendi
-    .patch(isLogin, upload.single('image'), update) // Upload middleware eklendi
-    .delete(isLogin, deletee);
+    .put(isLogin,isOwnEvent, upload.single('image'), update) // Upload middleware eklendi
+    .patch(isLogin,isOwnEvent, upload.single('image'), update) // Upload middleware eklendi
+    .delete(isLogin,isOwnEvent, deletee);
 
 /* ------------------------------------------------------- */
 module.exports = router;
