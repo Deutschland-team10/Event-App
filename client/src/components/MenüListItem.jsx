@@ -8,7 +8,7 @@ import { ListItemText } from '@mui/material';
 
 const links = [
   {
-    title: "Dashobard",
+    title: "Dashboard",
     url: "/home",
     //icons: <InboxIcon />
   },

@@ -57,7 +57,7 @@ const Dashboard = () => {
             onClick={() => navigate("/home")}
             sx={{ cursor: "pointer" }}
           >
-            Event App
+            ZusammenFun
           </Typography>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
