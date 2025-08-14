@@ -23,7 +23,7 @@ const useAuthCall = () => {
 
         try {
             const { data } = await axiosWithoutHeader.post(`auth/register`, userInfo);
-            console.log('lıne 25',data);
+            console.log('lıne 25', data);
             dispatch(registerSuccess(data));
             navigate("/home");
             toastSuccessNotify("Register is successful");

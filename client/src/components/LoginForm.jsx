@@ -28,16 +28,16 @@ const LoginForm = ({
 }) => {
     const { signInWithGoogle } = useAuthCall();
 
-    const navigate = useNavigate(); // Yönlendirme hook'u
+    const navigate = useNavigate();
 
     const signUpGoogle = async () => {
         try {
             await signInWithGoogle();
             // Başarılı giriş sonrası yönlendirme
             navigate('/home'); // Kullanıcının yönlendirileceği sayfa (örneğin: /dashboard veya /home)
-            console.log("Google ile başarıyla oturum açıldı!");
+            console.log("Sie haben sich erfolgreich bei Google angemeldet!");
         } catch (error) {
-            console.error("Google ile oturum açma başarısız oldu:", error);
+            console.error("Die Anmeldung bei Google ist fehlgeschlagen:", error);
             // Hata durumunda kullanıcıya bilgi verebilirsiniz, örneğin bir toast mesajı ile
         }
     };

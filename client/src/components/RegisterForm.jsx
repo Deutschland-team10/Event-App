@@ -5,7 +5,7 @@ import {
     Typography,
 } from "@mui/material";
 import GoogleIcon from "../assets/GoogleIcon";
-import { useNavigate } from 'react-router-dom'; // Yönlendirme için
+import { useNavigate } from 'react-router-dom';
 import useAuthCall from "../hook/useAuthCall";
 const RegisterForm = ({
     values,
@@ -25,9 +25,9 @@ const RegisterForm = ({
             await signInWithGoogle();
             // Başarılı giriş sonrası yönlendirme
             navigate('/Home'); // Kullanıcının yönlendirileceği sayfa (örneğin: /dashboard veya /home)
-            console.log("Google ile başarıyla oturum açıldı!");
+            console.log("Sie haben sich erfolgreich bei Google angemeldet!");
         } catch (error) {
-            console.error("Google ile oturum açma başarısız oldu:", error);
+            console.error("Die Anmeldung bei Google ist fehlgeschlagen:", error);
             // Hata durumunda kullanıcıya bilgi verebilirsiniz, örneğin bir toast mesajı ile
         }
     };

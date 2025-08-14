@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Paper, Typography, Grid } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 import EventForm from "../components/EventForm";
 import GroupForm from "../components/GroupForm";
 import { useSelector } from "react-redux";
-import EventCard from "../components/Table/EventCard";
 import useEventCall from "../hook/useEventCall";
 
 const CreateEvent = () => {
     const { getEventData } = useEventCall();
-    const { events} = useSelector((state) => state.event );
+    const { events } = useSelector((state) => state.event);
     const [open, setOpen] = useState(false);
-    
+
     const [formType, setFormType] = useState("event");
-    
+
     const [initialState, setInitialState] = useState({
         _id: null,
         title: "",
@@ -36,16 +35,16 @@ const CreateEvent = () => {
 
     const handleClose = () => {
         setOpen(false);
-        setInitialState({ 
+        setInitialState({
             _id: null,
-            title: "", 
-            description: "", 
+            title: "",
+            description: "",
             participants: [],
-            date: null, 
-            categoryId: "", 
-            time: "", 
-            image: "", 
-            location: "" 
+            date: null,
+            categoryId: "",
+            time: "",
+            image: "",
+            location: ""
         });
     };
 
@@ -84,7 +83,7 @@ const CreateEvent = () => {
                         onClick={() => handleOpenForm("event")}
                         sx={{ mr: 2 }}
                     >
-                        Etkinlik Oluştur
+                        Aktivität Erstellen
                     </Button>
                     <Button
                         variant={formType === "group" ? "contained" : "outlined"}
@@ -92,30 +91,30 @@ const CreateEvent = () => {
                         onClick={() => handleOpenForm("group")}
                         sx={{ mr: 2 }}
                     >
-                        Grup Oluştur
+                        Gruppe Erstellen
                     </Button>
                 </Typography>
 
                 {/* Sadece TEK form render et */}
                 {open && formType === "event" && (
-                    <EventForm 
-                        open={open} handleClose={handleClose} 
+                    <EventForm
+                        open={open} handleClose={handleClose}
                         initialState={initialState}
-                        
+
 
                     />
                 )}
-                
+
                 {open && formType === "group" && (
-                    <GroupForm  
-                        open={open} 
+                    <GroupForm
+                        open={open}
                         handleClose={handleClose}
                         initialState={initialState}
                     />
                 )}
             </Paper>
 
-           
+
         </LocalizationProvider>
     );
 };
