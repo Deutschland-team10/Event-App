@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: '*',
         methods: ["GET", "POST", "PUT", "PATCH", "HEAD", "DELETE", "OPTIONS"]
     }
 });
@@ -80,7 +80,7 @@ app.use('/upload', express.static('./upload'));
  app.use(require('./src/middlewares/authentication'));
 
 // Run Logger:
-app.use(require('./src/middlewares/logger'));
+//app.use(require('./src/middlewares/logger'));
 
 // res.getModelList():
 app.use(require('./src/middlewares/queryHandler'));
