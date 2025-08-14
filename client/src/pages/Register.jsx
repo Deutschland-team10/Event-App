@@ -90,7 +90,6 @@ const Register = () => {
                             actions.resetForm()
                             actions.setSubmitting(false)
                         }}
-
                         component={(props) => <RegisterForm  {...props} />}
                     />
 

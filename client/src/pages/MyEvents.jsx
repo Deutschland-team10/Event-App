@@ -7,9 +7,9 @@ import EventCard from "../components/Table/EventCard";
 import useEventCall from "../hook/useEventCall";
 
 const MyEvents = () => {
- const { getEventData } = useEventCall();
- const { currentUser } = useSelector((state) => state.auth);
- const { events} = useSelector((state) => state.event );
+    const { getEventData } = useEventCall();
+    const { currentUser } = useSelector((state) => state.auth);
+    const { events } = useSelector((state) => state.event);
 
     useEffect(() => {
         getEventData("events", currentUser._id);
@@ -17,23 +17,22 @@ const MyEvents = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            
 
             {/* Etkinlik Kartları */}
             <Grid container spacing={3} sx={{ mt: 3 }}>
-                {events.length>0 ? events.map((event, index) => (
+                {events.length > 0 ? events.map((event, index) => (
                     <Grid item xs={12} sm={6} md={4} key={event.id || index}>
-                        <EventCard  
-                            event={event}  
-                            
+                        <EventCard
+                            event={event}
+
                         />
                     </Grid>
-                )): <p
-                     style={{
+                )) : <p
+                    style={{
                         textAlign: "center", width: "100%", marginTop: "30px", fontSize: "48px", color: "red"
                     }}>
                     Sie haben noch kein Event erstellt !!!
-                    </p>}
+                </p>}
             </Grid>
         </LocalizationProvider>
     );

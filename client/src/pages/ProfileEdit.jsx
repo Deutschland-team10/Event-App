@@ -62,7 +62,7 @@ const ProfileForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         updateUser(formData, currentUser._id);
-        
+
 
     };
 
@@ -81,7 +81,7 @@ const ProfileForm = () => {
                         </Typography>
 
                         <TextField
-                            label="Ad"
+                            label="Vorname"
                             name="firstName"
                             value={formData.firstName}
                             onChange={handleChange}
@@ -90,7 +90,7 @@ const ProfileForm = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="Soyad"
+                            label="Nachname"
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleChange}
@@ -99,7 +99,7 @@ const ProfileForm = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="Kullanıcı Adı"
+                            label="username"
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
@@ -117,7 +117,7 @@ const ProfileForm = () => {
                             disabled
                         />
                         <TextField
-                            label="Doğum Tarihi"
+                            label="Geburtsdatum"
                             name="birthDate"
                             type="date"
                             value={formData.birthDate ? formData.birthDate.slice(0, 10) : ""}
@@ -127,7 +127,7 @@ const ProfileForm = () => {
                             InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                            label="Şehir"
+                            label="Stadt"
                             name="city"
                             value={formData.city}
                             onChange={handleChange}
@@ -137,22 +137,22 @@ const ProfileForm = () => {
 
                         <TextField
                             select
-                            label="Cinsiyet"
+                            label="Geschlecht"
                             name="gender"
                             value={formData.gender}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
                         >
-                            <MenuItem value="Male">Erkek</MenuItem>
-                            <MenuItem value="Female">Kadın</MenuItem>
-                            <MenuItem value="null">Diğer</MenuItem>
+                            <MenuItem value="Male">Männlich</MenuItem>
+                            <MenuItem value="Female">Weiblich</MenuItem>
+                            <MenuItem value="null">Divers</MenuItem>
                         </TextField>
 
                         {[0, 1, 2].map((i) => (
                             <TextField
                                 key={i}
-                                placeholder={`İlgi Alanı ${i + 1}`}
+                                placeholder={`Interesse ${i + 1}`}
                                 value={formData.interests[i] || ""}
                                 onChange={(e) => handleInterestChange(i, e.target.value)}
                                 fullWidth
@@ -162,14 +162,14 @@ const ProfileForm = () => {
 
                         <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
                             <Button type="submit" variant="contained" color="success" >
-                                Kaydet
+                                Speichern
                             </Button>
                             <Button
                                 variant="contained"
                                 color="error"
                                 onClick={() => navigate("/home/profile")}
                             >
-                                İptal
+                                Abbrechnen
                             </Button>
                         </div>
 

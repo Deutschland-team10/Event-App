@@ -12,31 +12,31 @@ import About from "../pages/About";
 import Group from "../pages/Group"
 import CreateEvent from "../pages/CreateEvent";
 import ChatPage from "../pages/ChatPage";
-import MyEvents from "../pages/myEvents";
+import MyEvents from "../pages/MyEvents";
 
 const AppRouter = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<StartPage />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="home" element={<PrivateRouter />}>
-          <Route path="" element={<Dashboard />}>
-            <Route index element={<Home />} />
-            <Route path="create-event" element={<CreateEvent />} />
-            <Route path="details/:_id" element={<CardDetails />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="my-events" element={<MyEvents />} />
-            <Route path="about" element={<About />} />
-            <Route path="group" element={<Group />} />
-            <Route path="chat-page" element={<ChatPage />} />
-            <Route path="profile/edit" element={<ProfileForm />} />
-          </Route>
-        </Route>
-      </Routes>
-    </Router>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<StartPage />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="home" element={<PrivateRouter />}>
+                    <Route path="" element={<Dashboard />}>
+                        <Route index element={<Home />} />
+                        <Route path="create-event" element={<CreateEvent />} />
+                        <Route path="details/:_id" element={<CardDetails />} />
+                        <Route path="profile" element={<Profile />} />
+                        <Route path="my-events" element={<MyEvents />} />
+                        <Route path="about" element={<About />} />
+                        <Route path="group" element={<Group />} />
+                        <Route path="chat-page" element={<ChatPage />} />
+                        <Route path="profile/edit" element={<ProfileForm />} />
+                    </Route>
+                </Route>
+            </Routes>
+        </Router>
+    );
 };
 
 export default AppRouter;

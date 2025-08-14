@@ -8,7 +8,7 @@ import {
     REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
- import eventReducer from "../features/chat/hooks/eventSlice";
+import eventReducer from "../features/chat/hooks/eventSlice";
 
 const persistConfig = {
     key: 'root',
@@ -20,7 +20,7 @@ const persistedReducer = persistReducer(persistConfig, authReducer)
 const store = configureStore({
     reducer: {
         auth: persistedReducer,
-        event:eventReducer
+        event: eventReducer
     },
 
     middleware: (getDefaultMiddleware) =>
