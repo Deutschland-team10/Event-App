@@ -12,7 +12,7 @@ import About from "../pages/About";
 import Group from "../pages/Group"
 import CreateEvent from "../pages/CreateEvent";
 import ChatPage from "../pages/ChatPage";
-import MyEvents from "../pages/myEvents";
+import MyEvents from "../pages/MyEvents";
 
 const AppRouter = () => {
   return (
