@@ -114,7 +114,7 @@ app.use(require('./src/routes'));
 app.use(require('./src/middlewares/errorHandler'))
 
 // RUN SERVER:
-server.listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`))
+server.listen(PORT, () => console.log(`http://${HOST}:${PORT}`))
 
 /* ------------------------------------------------------- */
 // Syncronization (must be in commentLine):
